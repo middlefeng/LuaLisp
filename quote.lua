@@ -26,6 +26,8 @@ function quote(symbols)
 	--	when *stopper* is nil, eschew all space
 	--  when *stopper* is not nil, eschew until hit a stopper
 	--
+	local latest_linebreak = 1
+	local line_num = 1
 	local function eschew(location, stopper)
 		local function is_stopper(sbyte)
 			for i = 1, #stopper do
@@ -52,11 +54,14 @@ function quote(symbols)
 			local current
 			if location <= string.len(symbols) then
 				current = string.byte(symbols, location)
+				if current == string.byte("\n") then
+					line_num = line_num + 1
+					latest_linebreak = location
+				end
 			else
 				current = nil
 				location = nil
 			end
-			
 		until location == nil or
 			  (stopper == nil and (not is_skipped(current))) or
 			  (stopper and is_stopper(current))
@@ -73,6 +78,19 @@ function quote(symbols)
 		local symbol = string.sub(symbols, location, stop_loc - 1)
 		return list(symbol), eschew(stop_loc)
 	end
+	
+	
+	local function forward(expected, location)
+		if location == nil or
+		   string.byte(symbols, location) ~= string.byte(expected) then
+			error("Syntax error. Expect \"(\" at line ".. line_num ..
+				  ", location " .. (location - latest_linebreak + 1));
+		else
+			location = location + 1
+			location = eschew(location)
+		end
+		return location
+	end
 
 
 	--
@@ -82,14 +100,10 @@ function quote(symbols)
 	function list_items(location)
 		local result_list = list()
 		
-		if string.byte(symbols, location) ~= string.byte("(") then
-			error("Syntax error. Expect \"(\" at location ".. location);
-		else
-			location = location + 1
-			location = eschew(location)
-		end
+		location = forward("(", location)
 		
-		while string.byte(symbols, location) ~= string.byte(")") do
+		while location ~= nil and
+			  string.byte(symbols, location) ~= string.byte(")") do
 		
 			if string.byte(symbols, location) == string.byte("(") then
 				local new_list
@@ -103,18 +117,23 @@ function quote(symbols)
 		
 		end
 		
-		if string.byte(symbols, location) ~= string.byte(")") then
-			error("Syntax error. Expect \")\" at location " .. location);
-		else
-			location = location + 1
-			location = eschew(location)
-		end
+		location = forward(")", location)
 		
 		return result_list, location
 	end
 	
-	location = eschew(1)
-	return list_items(location)
+	--
+	--  main chunk
+	--
+	local result_list = list()
+	local location = eschew(1)
+	while location ~= nil do
+		local new_list
+		new_list, location = list_items(location)
+		result_list = append(result_list, list(new_list))
+	end
+	
+	return result_list
 	
 end
 
