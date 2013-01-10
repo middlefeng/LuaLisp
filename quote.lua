@@ -21,7 +21,6 @@ end
 
 function quote(symbols)
 
-
 	--
 	--	when *stopper* is nil, eschew all space
 	--  when *stopper* is not nil, eschew until hit a stopper
@@ -74,7 +73,10 @@ function quote(symbols)
 	--	parse simple *symbol*s
 	--
 	local function list_symbol(location)
-		local stop_loc = eschew(location, {" ", ")"})
+		local stop_loc = eschew(location, {" ", ")", "\n"})
+		if stop_loc == nil then
+			stop_loc = string.len(symbols) + 1
+		end
 		local symbol = string.sub(symbols, location, stop_loc - 1)
 		return list(symbol), eschew(stop_loc)
 	end
@@ -94,32 +96,45 @@ function quote(symbols)
 
 
 	--
-	--	parse list and sub-list
+	--  forward declaration
 	--
-	local list_items
-	function list_items(location)
+	local list_item
+	local sub_list
+	
+	--
+	--  parse list item
+	--
+	function list_item(location)
+		if string.byte(symbols, location) == string.byte("(") then
+			return sub_list(location)
+		else
+			return list_symbol(location) 
+		end
+	end
+
+	--
+	--	parse sub-list
+	--
+	function sub_list(location)
 		local result_list = list()
 		
 		location = forward("(", location)
 		
-		while location ~= nil and
+		while location and
 			  string.byte(symbols, location) ~= string.byte(")") do
 		
-			if string.byte(symbols, location) == string.byte("(") then
-				local new_list
-				new_list, location = list_items(location)
-				result_list = append(result_list, list(new_list))
-			else
-				local new_list
-				new_list, location = list_symbol(location)
-				result_list = append(result_list, new_list)
-			end
+			local new_item
+			new_item, location = list_item(location)
+			result_list = append(result_list, new_item)
 		
 		end
 		
 		location = forward(")", location)
+		if location then
+			location = eschew(location)
+		end
 		
-		return result_list, location
+		return list(result_list), location
 	end
 	
 	--
@@ -128,9 +143,9 @@ function quote(symbols)
 	local result_list = list()
 	local location = eschew(1)
 	while location ~= nil do
-		local new_list
-		new_list, location = list_items(location)
-		result_list = append(result_list, list(new_list))
+		local new_item
+		new_item, location = list_item(location)
+		result_list = append(result_list, new_item)
 	end
 	
 	return result_list
