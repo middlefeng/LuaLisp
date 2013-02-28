@@ -241,7 +241,6 @@ function map(proc, list)
 end
 
 
-local cadr_ex
 function cadr_ex(op, ...)
 	if select("#", ...) == 0 then
 		return

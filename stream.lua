@@ -8,6 +8,10 @@ do
 	_ENV.cons = lisp.cons
 	_ENV.car = lisp.car
 	_ENV.cdr = lisp.cdr
+	_ENV.cadr_ex = lisp.cadr_ex
+	_ENV.contains_nil = lisp.contains_nil
+	_ENV.list = lisp.list
+	_ENV.list_unpack = lisp.list_unpack
 	
 	_ENV.set_cdr = lisp.set_cdr
 	
@@ -28,6 +32,18 @@ function stream_cdr(stream)
 		set_cdr(stream, (cdr(stream))())
 	end
 	return cdr(stream)
+end
+
+
+
+function stream_car_ex(...)
+	return cadr_ex(stream_car, ...)
+end
+
+
+
+function stream_cdr_ex(...)
+	return cadr_ex(stream_cdr, ...)
 end
 
 
@@ -72,14 +88,28 @@ end
 
 
 
+function stream_map_ex(proc, ...)
+	if contains_nil(...) then
+		return nil
+	else
+		local delay_list = list(...)
+		local function delay()
+			return stream_map_ex(proc, stream_cdr_ex(list_unpack(delay_list)))
+		end
+		return cons(proc(stream_car_ex(...)), delay)
+	end
+end
+
+
+
 function interleave(s1, s2)
 	if s1 == nil then
 		return s2
 	else
 		local function delay()
-			return interleave(s2, (stream_cdr(s1)))
+			return interleave(s2, stream_cdr(s1))
 		end
-		return cons(stream_car(s1), dealy)	
+		return cons(stream_car(s1), delay)
 	end
 end
 
