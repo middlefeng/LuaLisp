@@ -4,7 +4,9 @@ do
 	local lisp = require "lisp"
 	
 	local old_string = _ENV.string
+	local old_tonumber = _ENV.tonumber
 	local old_error = _ENV.error
+	local old_type = _ENV.type
 --	local old_print = _ENV.print
 	
 	_ENV = {}
@@ -12,7 +14,9 @@ do
 	_ENV.append = lisp.append
 	
 	_ENV.string = old_string
+	_ENV.tonumber = old_tonumber
 	_ENV.error = old_error
+	_ENV.type = old_type
 	_ENV.print = old_print
 end
 
@@ -78,6 +82,9 @@ function quote(symbols)
 			stop_loc = string.len(symbols) + 1
 		end
 		local symbol = string.sub(symbols, location, stop_loc - 1)
+		if type(symbol) == 'string' and tonumber(symbol) then
+			symbol = tonumber(symbol)
+		end
 		return list(symbol), eschew(stop_loc)
 	end
 	
