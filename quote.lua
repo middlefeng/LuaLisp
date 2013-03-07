@@ -82,8 +82,14 @@ function quote(symbols)
 			stop_loc = string.len(symbols) + 1
 		end
 		local symbol = string.sub(symbols, location, stop_loc - 1)
-		if type(symbol) == 'string' and tonumber(symbol) then
-			symbol = tonumber(symbol)
+		if type(symbol) == 'string' then
+			if tonumber(symbol) then
+				symbol = tonumber(symbol)
+			elseif symbol == 'true' then
+				symbol = true
+			elseif symbol == 'false' then
+				symbol = false
+			end
 		end
 		return list(symbol), eschew(stop_loc)
 	end
