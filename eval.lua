@@ -175,9 +175,9 @@ end
 
 function Enviornment:evalIf(exp)
 	if self:eval(if_predicate(exp)) then
-		self:eval(if_consequent(exp))
+		return self:eval(if_consequent(exp))
 	else
-		self:eval(if_alternative(exp))
+		return self:eval(if_alternative(exp))
 	end
 end
 
@@ -233,6 +233,12 @@ local function primitive_algebra(oper)
 		return function(v1, v2) return v1 * v2 end
 	elseif oper == "/" then
 		return function(v1, v2) return v1 / v2 end
+	elseif oper == "==" then
+		return function(v1, v2) return v1 == v2 end
+	elseif oper == "<" then
+		return function(v1, v2) return v1 < v2 end
+	elseif oper == ">" then
+		return function(v1, v2) return v1 > v2 end
 	end
 end 
 
@@ -260,6 +266,9 @@ Procedure.primitiveProcedures = {
 	["-"] =  Procedure:new(nil, primitive_algebra('-'), nil, 'primitive'),
 	["*"] =  Procedure:new(nil, primitive_algebra('*'), nil, 'primitive'),
 	["/"] =  Procedure:new(nil, primitive_algebra('/'), nil, 'primitive'),
+	["<"] =  Procedure:new(nil, primitive_algebra('<'), nil, 'primitive'),
+	[">"] =  Procedure:new(nil, primitive_algebra('>'), nil, 'primitive'),
+	["eq?"] = Procedure:new(nil, primitive_algebra('=='), nil, 'primitive'),
 }
 setmetatable(Procedure.primitiveProcedures, Frame)
 
