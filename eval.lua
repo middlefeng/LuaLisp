@@ -281,7 +281,7 @@ function Procedure:apply(arguments)
 	if self:isPrimitive() then
 		return apply_primitive_procedure(self.body, arguments)
 	elseif self:isCombound() then
-		local newEnv = Eniornment:new(
+		local newEnv = Enviornment:new(
 					Frame:newFromList(
 								self.params,
 								arguments),
@@ -451,7 +451,7 @@ end
 
 
 function lambda_body(exp)
-	return cadr(cdr(exp))
+	return cdr(cdr(exp))
 end
 
 
