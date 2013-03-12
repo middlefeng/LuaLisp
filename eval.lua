@@ -254,6 +254,7 @@ Procedure.primitiveProcedures = {
 	["car"] = Procedure:new(nil, car, nil, 'primitive'),
 	["cdr"] = Procedure:new(nil, cdr, nil, 'primitive'),
 	["cons"] = Procedure:new(nil, cons, nil, 'primitive'),
+	["list"] = Procedure:new(nil, list, nil, 'primitive'),
 	["null?"] = Procedure:new(nil, primitive_null, nil, 'primitive'),
 	["+"] =  Procedure:new(nil, primitive_algebra('+'), nil, 'primitive'),
 	["-"] =  Procedure:new(nil, primitive_algebra('-'), nil, 'primitive'),
