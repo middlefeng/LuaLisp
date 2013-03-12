@@ -566,7 +566,7 @@ local function make_begin(sequence)
 end
 
 
-local function sequence_to_exp(sequence)
+function sequence_to_exp(sequence)
 	if sequence == nil then
 		return nil
 	elseif last_exp(sequence) then
