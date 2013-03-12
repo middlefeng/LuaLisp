@@ -323,9 +323,9 @@ function is_variable(exp)
 end
 
 
-local function is_tagged(exp)
+local function is_tagged(exp, tag)
 	return is_pair(exp) and
-		   car(exp) == exp
+		   car(exp) == tag
 end
 
 
