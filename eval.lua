@@ -89,10 +89,7 @@ end
 
 
 function Enviornment:lookup(var)
-	print("look up " .. var)
-	for k,v in pairs(self.frame) do print(k,v) end
 	if self.frame[var] then
-		print("return var " .. tostring(self.frame[var]))
 		return self.frame[var]
 	elseif self.enclosing then
 		return self.enclosing:lookup(var)
@@ -128,15 +125,11 @@ end
 
 
 function Enviornment:eval(exp)
-	print("enter eval " .. tostring(exp))
-	print(is_self_evaluating(exp))
-	print(is_variable(exp))
 	if is_self_evaluating(exp) then
 		return exp
 	elseif is_quoted(exp) then
 		return text_of_quotation(exp)
 	elseif is_variable(exp) then
-		print("variable" .. tostring(exp))
 		return self:lookup(exp)
 	elseif is_assignment(exp) then
 		return self:evalAssignment(exp)
@@ -154,8 +147,6 @@ function Enviornment:eval(exp)
 	elseif is_cond(exp) then
 		return cond_to_if(exp)
 	elseif is_application(exp) then
-		print("A")
-		print(exp)
 		local operator = self:eval(car(exp))
 		local operands = self:listOfValues(cdr(exp))
 		return operator:apply(operands)
@@ -233,15 +224,15 @@ local function primitive_null(exp)
 end
 
 
-local function primitive_algebra(oper, v1, v2)
+local function primitive_algebra(oper)
 	if oper == '+' then
-		return v1 + v2
+		return function(v1, v2) return v1 + v2 end
 	elseif oper == '-' then
-		return v1 - v2
+		return function(v1, v2) return v1 - v2 end
 	elseif oper == '*' then
-		return v1 * v2
+		return function(v1, v2) return v1 * v2 end
 	elseif oper == "/" then
-		return v1 / v2
+		return function(v1, v2) return v1 / v2 end
 	end
 end 
 
@@ -264,10 +255,10 @@ Procedure.primitiveProcedures = {
 	["cdr"] = Procedure:new(nil, cdr, nil, 'primitive'),
 	["cons"] = Procedure:new(nil, cons, nil, 'primitive'),
 	["null?"] = Procedure:new(nil, primitive_null, nil, 'primitive'),
-	["+"] =  Procedure:new(nil, primitive_algebra, nil, 'primitive'),
-	["-"] =  Procedure:new(nil, primitive_algebra, nil, 'primitive'),
-	["*"] =  Procedure:new(nil, primitive_algebra, nil, 'primitive'),
-	["/"] =  Procedure:new(nil, primitive_algebra, nil, 'primitive'),
+	["+"] =  Procedure:new(nil, primitive_algebra('+'), nil, 'primitive'),
+	["-"] =  Procedure:new(nil, primitive_algebra('-'), nil, 'primitive'),
+	["*"] =  Procedure:new(nil, primitive_algebra('*'), nil, 'primitive'),
+	["/"] =  Procedure:new(nil, primitive_algebra('/'), nil, 'primitive'),
 }
 setmetatable(Procedure.primitiveProcedures, Frame)
 
