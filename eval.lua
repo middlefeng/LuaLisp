@@ -151,6 +151,10 @@ function Enviornment:eval(exp)
 		return operator:apply(nil)
 	elseif is_delay(exp) then
 		return self:evalDelay(exp)
+	elseif is_cons_stream(exp) then
+		local toCar = cadr(exp)
+		local toCdr = make_lambda(nil, cdr(cdr(exp)))
+		return self:eval(list('cons', toCar, toCdr))
 	elseif is_application(exp) then
 		local operator = self:eval(car(exp))
 		local operands = self:listOfValues(cdr(exp))
@@ -413,6 +417,12 @@ end
 
 function is_force(exp)
 	return is_tagged(exp, 'force')
+end
+
+
+
+function is_cons_stream(exp)
+	return is_tagged(exp, 'cons-stream')
 end
 
 
