@@ -269,6 +269,7 @@ Procedure.primitiveProcedures = {
 	["<"] =  Procedure:new(nil, primitive_algebra('<'), nil, 'primitive'),
 	[">"] =  Procedure:new(nil, primitive_algebra('>'), nil, 'primitive'),
 	["eq?"] = Procedure:new(nil, primitive_algebra('=='), nil, 'primitive'),
+	["="] = Procedure:new(nil, primitive_algebra('=='), nil, 'primitive'),
 }
 setmetatable(Procedure.primitiveProcedures, Frame)
 
