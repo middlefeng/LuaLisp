@@ -146,6 +146,11 @@ function Enviornment:eval(exp)
 		return self:evalSequence(exp)
 	elseif is_cond(exp) then
 		return cond_to_if(exp)
+	elseif is_force(exp) then
+		local operator = self:eval(cadr(exp))
+		return operator:apply(nil)
+	elseif is_delay(exp) then
+		return self:evalDelay(exp)
 	elseif is_application(exp) then
 		local operator = self:eval(car(exp))
 		local operands = self:listOfValues(cdr(exp))
@@ -179,6 +184,13 @@ function Enviornment:evalIf(exp)
 	else
 		return self:eval(if_alternative(exp))
 	end
+end
+
+
+
+function Enviornment:evalDelay(exp)
+	local body = cdr(exp)
+	return self:eval(make_lambda(nil, body))
 end
 
 
@@ -240,7 +252,7 @@ local function primitive_algebra(oper)
 	elseif oper == ">" then
 		return function(v1, v2) return v1 > v2 end
 	end
-end 
+end
 
 
 
@@ -392,6 +404,19 @@ function is_last_exp(exp)
 end
 
 
+
+function is_delay(exp)
+	return is_tagged(exp, 'delay')
+end
+
+
+
+function is_force(exp)
+	return is_tagged(exp, 'force')
+end
+
+
+
 --                   -- expression predicates --                       --
 -------------------------------------------------------------------------
 
@@ -426,7 +451,7 @@ end
 --- lambda / function
 
 
-local function make_lambda(params, body)
+function make_lambda(params, body)
 	return cons('lambda', cons(params, body))
 end
 
