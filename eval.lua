@@ -105,7 +105,7 @@ function Enviornment:setVar(var, val)
 		self.frame[var] = val
 		return val
 	elseif self.enclosing then
-		return self.enclosing:set(var, val)
+		return self.enclosing:setVar(var, val)
 	else
 		return nil
 	end
@@ -161,7 +161,7 @@ function Enviornment:evalAssignment(exp)
 	local assign_var = assignment_variable(exp)
 	local assign_val = assignment_value(exp)
 	self:setVar(assign_var,
-			    self:eval(assign_var))
+			    self:eval(assign_val))
 end
 
 
