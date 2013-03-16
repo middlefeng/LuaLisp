@@ -4,7 +4,6 @@
 --[[
 
 To Do:
-	1. Primitive "let".
 
 --]]
 -------------------------------------------------------------------------
@@ -13,6 +12,8 @@ do
 	local lisp = require "lisp"
 	
 	local old_setmetatable = _ENV.setmetatable
+	local old_getmetatable = _ENV.getmetatable
+	local old_error = _ENV.error
 	local old_table = _ENV.table
 	local old_type = _ENV.type
 	local old_string = _ENV.string
@@ -24,6 +25,8 @@ do
 
 	_ENV = {}
 	_ENV.setmetatable = old_setmetatable
+	_ENV.getmetatable = old_getmetatable
+	_ENV.error = old_error
 	
 	_ENV.is_pair = lisp.is_pair
 	_ENV.cons = lisp.cons
@@ -171,6 +174,9 @@ function Enviornment:eval(exp)
 	elseif is_application(exp) then
 		local operator = self:eval(car(exp))
 		local operands = self:listOfValues(cdr(exp))
+		if operator == nil or getmetatable(operator) ~= Procedure then
+			error("Invalid operator in application: " .. tostring(exp))
+		end
 		return operator:apply(operands)
 	else
 		return nil
