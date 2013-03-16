@@ -1,4 +1,14 @@
 
+
+-------------------------------------------------------------------------
+--[[
+
+To Do:
+	1. Primitive "let".
+
+--]]
+-------------------------------------------------------------------------
+
 do
 	local lisp = require "lisp"
 	
@@ -21,6 +31,7 @@ do
 	_ENV.cdr = lisp.cdr
 	_ENV.cadr = lisp.cadr
 	_ENV.list = lisp.list
+	_ENV.map = lisp.map
 	_ENV.list_unpack = lisp.list_unpack
 	
 	_ENV.table = table
@@ -142,10 +153,12 @@ function Enviornment:eval(exp)
 					lambda_param(exp),
 					lambda_body(exp),
 					self)
+	elseif is_let(exp) then
+		return self:eval(let_to_lambda_apply(exp))
 	elseif is_begin(exp) then
 		return self:evalSequence(exp)
 	elseif is_cond(exp) then
-		return cond_to_if(exp)
+		return self:eval(cond_to_if(exp))
 	elseif is_force(exp) then
 		local operator = self:eval(cadr(exp))
 		return operator:apply(nil)
@@ -426,6 +439,11 @@ function is_cons_stream(exp)
 end
 
 
+function is_let(exp)
+	return is_tagged(exp, 'let')
+end
+
+
 
 --                   -- expression predicates --                       --
 -------------------------------------------------------------------------
@@ -623,6 +641,39 @@ function sequence_to_exp(sequence)
 	end
 end
 
+
+--- let
+
+
+function let_to_lambda_apply(exp)
+	local lambda = let_to_lambda(exp)
+	local arguments = let_arguments(exp)
+	return cons(lambda, arguments)
+end
+
+
+
+function let_to_lambda(exp)
+	local param = let_lambda_parameter(exp)
+	local body = let_lambda_body(exp)
+	return make_lambda(param, body)
+end
+
+
+
+function let_lambda_parameter(exp)
+	return map(car, cadr(exp))
+end
+
+
+function let_arguments(exp)
+	return map(cadr, cadr(exp))
+end
+
+
+function let_lambda_body(exp)
+	return cdr(cdr(exp))
+end
 
 
 --                      -- evaluation rules --                         --
