@@ -21,6 +21,7 @@ do
 	
 	local old_print = _ENV.print
 	local old_pairs = _ENV.pairs
+	local old_select = _ENV.select
 
 
 	_ENV = {}
@@ -44,6 +45,7 @@ do
 	
 	_ENV.print = old_print
 	_ENV.pairs = old_pairs
+	_ENV.select = old_select
 end
 
 
@@ -151,6 +153,13 @@ function Enviornment:eval(exp)
 		return self:evalDefinition(exp)
 	elseif is_if(exp) then
 		return self:evalIf(exp)
+	elseif is_and(exp) then
+		print(and_to_if(cdr(exp)))
+		return self:eval(and_to_if(cdr(exp)))
+	elseif is_or(exp) then
+		return self:eval(or_to_if(cdr(exp)))
+	elseif is_not(exp) then
+		return self:eval(not_to_if(cdr(exp)))
 	elseif is_lambda(exp) then
 		return Procedure:new(
 					lambda_param(exp),
@@ -259,15 +268,55 @@ local function primitive_null(exp)
 end
 
 
+local function primitive_add(...)
+	local result = 0
+	for i = 1, select('#', ...) do
+		result = result + select(i, ...)
+	end
+	return result
+end
+
+
+
+local function primitive_sub(...)
+	local result = select(1, ...)
+	for i = 2, select('#', ...) do
+		result = result - select(i, ...)
+	end
+	return result
+end
+
+
+
+local function primitive_mul(...)
+	local result = 1
+	for i = 1, select('#', ...) do
+		result = result * select(i, ...)
+	end
+	return result
+end
+
+
+
+local function primitive_div(...)
+	local result = select('#', ...)
+	for i = 2, select('#', ...) do
+		result = result + select(i, ...)
+	end
+	return result
+end
+
+
+
 local function primitive_algebra(oper)
 	if oper == '+' then
-		return function(v1, v2) return v1 + v2 end
+		return primitive_add
 	elseif oper == '-' then
-		return function(v1, v2) return v1 - v2 end
+		return primitive_sub
 	elseif oper == '*' then
-		return function(v1, v2) return v1 * v2 end
+		return primitive_mul
 	elseif oper == "/" then
-		return function(v1, v2) return v1 / v2 end
+		return primitive_div
 	elseif oper == "==" then
 		return function(v1, v2) return v1 == v2 end
 	elseif oper == "<" then
@@ -358,7 +407,7 @@ end
 
 function is_self_evaluating(exp)
 	return (type(exp) == 'string' and string.sub(exp, 1, 1) == "'") or
-		    type(exp) == 'number' or
+		    type(exp) == 'number' or type(exp) == 'boolean' or
 		    false
 end
 
@@ -395,6 +444,23 @@ end
 
 function is_if(exp)
 	return is_tagged(exp, 'if')
+end
+
+
+function is_and(exp)
+	return is_tagged(exp, 'and')
+end
+
+
+
+function is_or(exp)
+	return is_tagged(exp, 'or')
+end
+
+
+
+function is_not(exp)
+	return is_tagged(exp, 'not')
 end
 
 
@@ -602,6 +668,32 @@ function expaned_clauses(clauses)
 					   sequence_to_exp(cond_action(car(clauses))),
 					   expand_clauses(cdr(clauses)))
 	end
+end
+
+
+--- relation
+
+
+function and_to_if(exp)
+	if cdr(exp) == nil then
+		return car(exp)
+	else
+		return make_if(car(exp), and_to_if(cdr(exp)), false)
+	end
+end
+
+
+function or_to_if(exp)
+	if cdr(exp) == nil then
+		return car(exp)
+	else
+		return make_if(car(exp), true, or_to_if(cdr(exp)))
+	end
+end
+
+
+function not_to_if(exp)
+	return make_if(car(exp), false, true)
 end
 
 
