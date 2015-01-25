@@ -98,8 +98,14 @@ function quote(symbols)
 	local function forward(expected, location)
 		if location == nil or
 		   string.byte(symbols, location) ~= string.byte(expected) then
-			error("Syntax error. Expect \"(\" at line ".. line_num ..
-				  ", location " .. (location - latest_linebreak + 1));
+		   	
+		   	local location_str = "[end]"
+		   	if location then
+		   		location_str = tostring(location - latest_linebreak + 1)
+		   	end
+
+			error("Syntax error. Expect \"" .. expected .. "\" at line ".. line_num ..
+				  ", location " .. location_str);
 		else
 			location = location + 1
 			location = eschew(location)

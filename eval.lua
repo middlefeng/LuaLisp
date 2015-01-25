@@ -268,6 +268,11 @@ local function primitive_null(exp)
 end
 
 
+local function primitive_atom(exp)
+	return not is_pair(exp)
+end
+
+
 local function primitive_add(...)
 	local result = 0
 	for i = 1, select('#', ...) do
@@ -346,6 +351,7 @@ Procedure.primitiveProcedures = {
 	["cons"] = Procedure:new(nil, cons, nil, 'primitive'),
 	["list"] = Procedure:new(nil, list, nil, 'primitive'),
 	["null?"] = Procedure:new(nil, primitive_null, nil, 'primitive'),
+	["atom?"] = Procedure:new(nil, primitive_atom, nil, 'primitive'),
 	["+"] =  Procedure:new(nil, primitive_algebra('+'), nil, 'primitive'),
 	["-"] =  Procedure:new(nil, primitive_algebra('-'), nil, 'primitive'),
 	["*"] =  Procedure:new(nil, primitive_algebra('*'), nil, 'primitive'),
@@ -377,10 +383,10 @@ function Procedure:apply(arguments)
 		return apply_primitive_procedure(self.body, arguments)
 	elseif self:isCombound() then
 		local newEnv = Enviornment:new(
-					Frame:newFromList(
-								self.params,
-								arguments),
-					self.env)
+							Frame:newFromList(
+										self.params,
+										arguments),
+							self.env)
 		return newEnv:evalSequence(self.body)
 	end
 end
