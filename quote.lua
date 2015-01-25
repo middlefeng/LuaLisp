@@ -112,6 +112,7 @@ function quote(symbols)
 	--  forward declaration
 	--
 	local list_item
+	local list_quote
 	local sub_list
 	
 	--
@@ -120,6 +121,8 @@ function quote(symbols)
 	function list_item(location)
 		if string.byte(symbols, location) == string.byte("(") then
 			return sub_list(location)
+		elseif string.byte(symbols, location) == string.byte("'") then
+			return list_quote(location)
 		else
 			return list_symbol(location) 
 		end
@@ -147,6 +150,19 @@ function quote(symbols)
 			location = eschew(location)
 		end
 		
+		return list(result_list), location
+	end
+
+	--
+	--	parse quote
+	--
+	function list_quote(location)
+		location = forward("'", location)
+
+		local new_item
+		new_item, location = list_item(location)
+		local result_list = append(list("quote"), new_item)
+
 		return list(result_list), location
 	end
 	
