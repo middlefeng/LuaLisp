@@ -7,7 +7,8 @@ do
 	local old_tonumber = _ENV.tonumber
 	local old_error = _ENV.error
 	local old_type = _ENV.type
---	local old_print = _ENV.print
+	local old_table = _ENV.table
+	local old_print = _ENV.print
 	
 	_ENV = {}
 	_ENV.list = lisp.list
@@ -17,6 +18,7 @@ do
 	_ENV.tonumber = old_tonumber
 	_ENV.error = old_error
 	_ENV.type = old_type
+	_ENV.table = old_table
 	_ENV.print = old_print
 end
 
@@ -71,8 +73,8 @@ function quote(symbols)
 		
 		return location
 	end
-	
-	
+
+
 	--
 	--	parse simple *symbol*s
 	--
@@ -119,6 +121,7 @@ function quote(symbols)
 	--
 	local list_item
 	local list_quote
+	local read_string
 	local sub_list
 	
 	--
@@ -129,6 +132,8 @@ function quote(symbols)
 			return sub_list(location)
 		elseif string.byte(symbols, location) == string.byte("'") then
 			return list_quote(location)
+		elseif string.byte(symbols, location) == string.byte("\"") then
+			return read_string(location)
 		else
 			return list_symbol(location) 
 		end
@@ -170,6 +175,28 @@ function quote(symbols)
 		local result_list = append(list("quote"), new_item)
 
 		return list(result_list), location
+	end
+
+
+	function read_string(location)
+		local result = {}
+
+		local last_escape = location + 1
+		repeat
+			location = location + 1
+			local current = string.byte(symbols, location)
+			if current == string.byte("\\") then
+				if location - 1 > last_escape then
+					table.insert(result, string.sub(symbols, last_escape, location - 1))
+				end
+				last_escape = location + 1
+				location = location + 1
+			end
+		until current == string.byte("\"")
+
+		table.insert(result, string.sub(symbols, last_escape, location - 1))
+		result = append(list("quote"), list(table.concat(result)))
+		return list(result), eschew(location + 1)
 	end
 	
 	--
