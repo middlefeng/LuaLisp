@@ -67,12 +67,15 @@ function Frame:new()
 end
 
 
+local nil_val = {}
+
 
 function Frame:newFromList(varNames, varValues)
 	local result = {}
 	local function addProp(nameList, valueList)
 		if nameList ~= nil then
-			result[car(nameList)] = car(valueList)
+			local value = car(valueList) or nil_val
+			result[car(nameList)] = value
 			return addProp(cdr(nameList), cdr(valueList))
 		end
 	end
@@ -106,7 +109,11 @@ end
 
 function Enviornment:lookup(var)
 	if self.frame[var] then
-		return self.frame[var]
+		if self.frame[var] == nil_val then
+			return nil
+		else
+			return self.frame[var]
+		end
 	elseif self.enclosing then
 		return self.enclosing:lookup(var)
 	else
@@ -118,6 +125,7 @@ end
 
 function Enviornment:setVar(var, val)
 	if self.frame[var] then
+		val = val or nil_val
 		self.frame[var] = val
 		return val
 	elseif self.enclosing then
@@ -130,6 +138,7 @@ end
 
 
 function Enviornment:defineVar(var, val)
+	val = val or nil_val
 	if not self:setVar(var, val) then
 		self.frame[var] = val
 	end
@@ -351,6 +360,7 @@ Procedure.primitiveProcedures = {
 	["cons"] = Procedure:new(nil, cons, nil, 'primitive'),
 	["list"] = Procedure:new(nil, list, nil, 'primitive'),
 	["null?"] = Procedure:new(nil, primitive_null, nil, 'primitive'),
+	["pair?"] = Procedure:new(nil, is_pair, nil, 'primitive'),
 	["atom?"] = Procedure:new(nil, primitive_atom, nil, 'primitive'),
 	["+"] =  Procedure:new(nil, primitive_algebra('+'), nil, 'primitive'),
 	["-"] =  Procedure:new(nil, primitive_algebra('-'), nil, 'primitive'),
