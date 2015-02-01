@@ -92,7 +92,7 @@ end
 
 
 function is_pair(p)
-	return getmetatable(p) == cons_meta
+	return p.car ~= nil or p.cdr ~= nil
 end
 
 
