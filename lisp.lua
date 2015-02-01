@@ -7,6 +7,7 @@ local old_type = type
 local old_getmetatable = getmetatable
 local old_setmetatable = setmetatable
 local old_select = select
+-- local old_print = print
 
 local _ENV = {}
 _ENV.table = old_table
@@ -16,10 +17,14 @@ _ENV.string = old_string
 _ENV.tostring = old_tostring
 _ENV.type = old_type
 _ENV.select = old_select
+_ENV.print = old_print
 
 
 -------------------------------------------------------------------------
 --                 -- meta-methods for display --                      --
+
+empty_list = {}
+
 
 local list_tostring
 function list_tostring(list)
@@ -37,7 +42,7 @@ function list_tostring(list)
 	
 	local insert_value
 	function insert_value(sub_list)
-		if sub_list ~= nil then
+		if sub_list ~= empty_list then
 			table.insert(result, quote(car(sub_list)))
 			table.insert(result, " ")
 			return insert_value(cdr(sub_list))
@@ -52,12 +57,21 @@ function list_tostring(list)
 end
 
 
+local cons_meta = {
+	__tostring = list_tostring,
+	__eq = list_eq
+}
+
+
 local list_eq
 function list_eq(a, b)
 	if a == nil and b == nil then
 		return true
+	elseif getmetatable(a) ~= cons_meta and
+		   getmetatable(b) ~= cons_meta then
+		return a == b
 	else
-		return a ~= nil and b ~= nil and
+		return a ~= empty_list and b ~= empty_list and
 		       car(a) == car(b) and
 			   list_eq(cdr(a), cdr(b))
 	end
@@ -65,10 +79,6 @@ end
 
 
 
-local cons_meta = {
-	__tostring = list_tostring,
-	__eq = list_eq
-}
 
 --             -- end of meta-methods for display --                   --
 -------------------------------------------------------------------------
@@ -150,7 +160,7 @@ end
 
 function list(...)
 	if select("#", ...) == 0 then
-		return nil
+		return empty_list
 	else
 		return cons(select(1, ...),
 			   list(sub_stack(...)))
@@ -159,7 +169,7 @@ end
 
 
 function list_unpack(list)
-	if cdr(list) == nil then
+	if cdr(list) == empty_list then
 		return car(list)
 	else
 		return car(list), list_unpack(cdr(list))
@@ -178,7 +188,7 @@ end
 
 
 function length(list)
-	if list == nil then
+	if list == empty_list then
 		return 0
 	else
 		return 1 + length(cdr(list))
@@ -195,8 +205,8 @@ end
 
 
 function append(list1, list2)
-	if list1 == nil then
-		return list2
+	if list1 == empty_list or list1 == nil then
+		return list2 or empty_list
 	else
 		return cons(car(list1),
 					append(cdr(list1), list2))
@@ -206,7 +216,7 @@ end
 
 
 function list_contains_nil(list)
-	if list == nil then
+	if list == nil or list == empty_list then
 		return false
 	elseif car(list) == nil then
 		return true
@@ -232,8 +242,8 @@ end
 --                          -- filter / map --                         --
 
 function map(proc, list)
-	if list == nil then
-		return nil
+	if list == nil or list == empty_list then
+		return empty_list
 	else
 		return cons(proc(car(list)),
 					map(proc, cdr(list)))
@@ -272,8 +282,8 @@ end
 
 
 function filter(predicate, list)
-	if list == nil then
-		return nil
+	if list == nil or list == empty_list then
+		return empty_list
 	elseif predicate(car(list)) then
 		return cons(car(list), filter(predicate, cdr(list)))
 	else
@@ -284,8 +294,8 @@ end
 
 
 function accumulate(op, initial, sequence)
-	if sequence == nil then
-		return initial
+	if sequence == nil or sequence == empty_list then
+		return initial or empty_list
 	else
 		return op(car(sequence),
 				  accumulate(op, initial, cdr(sequence)))
@@ -296,7 +306,7 @@ end
 
 function flat_map(proc, seq)
 	return accumulate(append,
-					  nil,
+					  empty_list,
 					  map(proc, seq))
 end
 
@@ -313,7 +323,7 @@ end
 
 
 function count_leaf(tree)
-	if tree == nil then
+	if tree == nil or tree == empty_list then
 		return 0
 	elseif not is_pair(tree) then
 		return 1
@@ -338,8 +348,8 @@ end
 
 
 function enum_tree(tree)
-	if tree == nil then
-		return nil
+	if tree == nil or tree == empty_list then
+		return empty_list
 	elseif not is_pair(tree) then
 		return list(tree)
 	else

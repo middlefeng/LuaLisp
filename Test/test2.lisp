@@ -22,3 +22,6 @@
 
 (print 'Result:)
 (print (reverse to_rev))
+
+(print (cons 'list (list to_rev)))
+(print (cons 'list '()))
