@@ -7,6 +7,8 @@ local old_type = type
 local old_getmetatable = getmetatable
 local old_setmetatable = setmetatable
 local old_select = select
+--local old_print = print
+--local old_error = error
 
 local _ENV = {}
 _ENV.table = old_table
@@ -16,29 +18,26 @@ _ENV.string = old_string
 _ENV.tostring = old_tostring
 _ENV.type = old_type
 _ENV.select = old_select
+_ENV.print = old_print
+_ENV.error = old_error
 
 
 -------------------------------------------------------------------------
 --                 -- meta-methods for display --                      --
 
-local list_tostring
 function list_tostring(list)
+
+	if type(list) ~= "table" then
+		return tostring(list)
+	end
 
 	local result = {}
 	result[1] = "("
 	
-	local function quote(s)
-		if type(s) == "string" then
-			return s
-		else
-			return tostring(s)
-		end
-	end
-	
 	local insert_value
 	function insert_value(sub_list)
 		if sub_list ~= nil then
-			table.insert(result, quote(car(sub_list)))
+			table.insert(result, list_tostring(car(sub_list)))
 			table.insert(result, " ")
 			return insert_value(cdr(sub_list))
 		else
@@ -99,7 +98,9 @@ end
 
 function cons(a, b)
 	local result = { car = a, cdr = b }
-	setmetatable(result, cons_meta)
+	if set_cons_metatable then
+		setmetatable(result, cons_meta)
+	end
 	return result
 end
 
