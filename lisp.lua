@@ -92,7 +92,7 @@ end
 
 
 function is_pair(p)
-	return p.car ~= nil or p.cdr ~= nil
+	return type(p) == "table" and (p.car ~= nil or p.cdr ~= nil)
 end
 
 

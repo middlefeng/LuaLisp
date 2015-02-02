@@ -23,7 +23,6 @@ do
 	local old_pairs = _ENV.pairs
 	local old_select = _ENV.select
 
-
 	_ENV = {}
 	_ENV.setmetatable = old_setmetatable
 	_ENV.getmetatable = old_getmetatable
@@ -37,6 +36,7 @@ do
 	_ENV.list = lisp.list
 	_ENV.map = lisp.map
 	_ENV.list_unpack = lisp.list_unpack
+	_ENV.list_tostring = lisp.list_tostring
 	
 	_ENV.table = table
 	_ENV.type = old_type
@@ -341,6 +341,15 @@ local function primitive_algebra(oper)
 end
 
 
+local function primitive_tostring(list)
+	if is_pair(list) then
+		return list_tostring(list)
+	end
+
+	return tostring(list)
+end
+
+
 
 function Procedure:new(params, body, env, type)
 	local result = {
@@ -371,6 +380,7 @@ Procedure.primitiveProcedures = {
 	["eq?"] = Procedure:new(nil, primitive_algebra('=='), nil, 'primitive'),
 	["="] = Procedure:new(nil, primitive_algebra('=='), nil, 'primitive'),
 	["print"] = Procedure:new(nil, print, nil, 'primitive'),
+	["tostring"] = Procedure:new(nil, primitive_tostring, nil, 'primitive'),
 }
 setmetatable(Procedure.primitiveProcedures, Frame)
 
