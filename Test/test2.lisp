@@ -9,7 +9,7 @@
 (define to_rev (list 'a 'b 'c 'd 'e))
 
 (print 'Reverse:)
-(print to_rev)
+(print (tostring to_rev))
 
 (define (reverse l)
 		(define (reverse l r)
@@ -21,4 +21,5 @@
 		(reverse l '()))
 
 (print 'Result:)
-(print (reverse to_rev))
+(print (tostring (reverse to_rev)))
+(reverse to_rev)
