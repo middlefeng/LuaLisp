@@ -140,9 +140,7 @@ end
 
 function Enviornment:defineVar(var, val)
 	val = val or nil_val
-	if not self:setVar(var, val) then
-		self.frame[var] = val
-	end
+	self.frame[var] = val
 end
 
 
