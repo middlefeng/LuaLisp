@@ -271,6 +271,19 @@ Procedure = {}
 Procedure.__index = Procedure
 
 
+
+local function procedure_to_string(proc)
+	if proc.primitiveName then
+		return "[Primitive: " .. proc.primitiveName .. "]"
+	end
+
+	return "[Procedure: " .. list_tostring(proc.params) .. " " ..
+			list_tostring(proc.body) .. "]"
+end
+
+Procedure.__tostring = procedure_to_string
+
+
 local function primitive_null(exp)
 	return exp == empty_list
 end
@@ -350,12 +363,13 @@ end
 
 
 
-function Procedure:new(params, body, env, type)
+function Procedure:new(params, body, env, type, primitivename)
 	local result = {
 		params = params,
 		body = body,
 		env = env,
-		type = type or 'procedure'
+		type = type or 'procedure',
+		primitiveName = primitivename
 	}
 	setmetatable(result, self)
 	return result
@@ -363,23 +377,23 @@ end
 
 
 Procedure.primitiveProcedures = {
-	["car"] = Procedure:new(nil, car, nil, 'primitive'),
-	["cdr"] = Procedure:new(nil, cdr, nil, 'primitive'),
-	["cons"] = Procedure:new(nil, cons, nil, 'primitive'),
-	["list"] = Procedure:new(nil, list, nil, 'primitive'),
-	["null?"] = Procedure:new(nil, primitive_null, nil, 'primitive'),
-	["pair?"] = Procedure:new(nil, is_pair, nil, 'primitive'),
-	["atom?"] = Procedure:new(nil, primitive_atom, nil, 'primitive'),
-	["+"] =  Procedure:new(nil, primitive_algebra('+'), nil, 'primitive'),
-	["-"] =  Procedure:new(nil, primitive_algebra('-'), nil, 'primitive'),
-	["*"] =  Procedure:new(nil, primitive_algebra('*'), nil, 'primitive'),
-	["/"] =  Procedure:new(nil, primitive_algebra('/'), nil, 'primitive'),
-	["<"] =  Procedure:new(nil, primitive_algebra('<'), nil, 'primitive'),
-	[">"] =  Procedure:new(nil, primitive_algebra('>'), nil, 'primitive'),
-	["eq?"] = Procedure:new(nil, primitive_algebra('=='), nil, 'primitive'),
-	["="] = Procedure:new(nil, primitive_algebra('=='), nil, 'primitive'),
-	["print"] = Procedure:new(nil, print, nil, 'primitive'),
-	["tostring"] = Procedure:new(nil, primitive_tostring, nil, 'primitive'),
+	["car"] = Procedure:new(nil, car, nil, 'primitive', 'car'),
+	["cdr"] = Procedure:new(nil, cdr, nil, 'primitive', 'cdr'),
+	["cons"] = Procedure:new(nil, cons, nil, 'primitive', 'cons'),
+	["list"] = Procedure:new(nil, list, nil, 'primitive', 'list'),
+	["null?"] = Procedure:new(nil, primitive_null, nil, 'primitive', 'null?'),
+	["pair?"] = Procedure:new(nil, is_pair, nil, 'primitive', 'pair?'),
+	["atom?"] = Procedure:new(nil, primitive_atom, nil, 'primitive', 'atom?'),
+	["+"] =  Procedure:new(nil, primitive_algebra('+'), nil, 'primitive', '+'),
+	["-"] =  Procedure:new(nil, primitive_algebra('-'), nil, 'primitive', '-'),
+	["*"] =  Procedure:new(nil, primitive_algebra('*'), nil, 'primitive', '*'),
+	["/"] =  Procedure:new(nil, primitive_algebra('/'), nil, 'primitive', '/'),
+	["<"] =  Procedure:new(nil, primitive_algebra('<'), nil, 'primitive', '<'),
+	[">"] =  Procedure:new(nil, primitive_algebra('>'), nil, 'primitive', '>'),
+	["eq?"] = Procedure:new(nil, primitive_algebra('=='), nil, 'primitive', 'eq?'),
+	["="] = Procedure:new(nil, primitive_algebra('=='), nil, 'primitive', '='),
+	["print"] = Procedure:new(nil, print, nil, 'primitive', 'print'),
+	["tostring"] = Procedure:new(nil, primitive_tostring, nil, 'primitive', 'tostring'),
 }
 setmetatable(Procedure.primitiveProcedures, Frame)
 
