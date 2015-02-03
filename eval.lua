@@ -36,6 +36,7 @@ do
 	_ENV.cadr = lisp.cadr
 	_ENV.list = lisp.list
 	_ENV.map = lisp.map
+	_ENV.empty_list = lisp.empty_list
 	_ENV.list_unpack = lisp.list_unpack
 	
 	_ENV.table = table
@@ -73,7 +74,7 @@ local nil_val = {}
 function Frame:newFromList(varNames, varValues)
 	local result = {}
 	local function addProp(nameList, valueList)
-		if nameList ~= nil then
+		if nameList ~= nil and nameList ~= empty_list then
 			local value = car(valueList) or nil_val
 			result[car(nameList)] = value
 			return addProp(cdr(nameList), cdr(valueList))
@@ -110,7 +111,7 @@ end
 function Enviornment:lookup(var)
 	if self.frame[var] then
 		if self.frame[var] == nil_val then
-			return nil
+			return nil_val
 		else
 			return self.frame[var]
 		end
@@ -246,8 +247,8 @@ end
 
 
 function Enviornment:listOfValues(exps)
-	if exps == nil then
-		return nil
+	if exps == nil or exps == empty_list then
+		return empty_list
 	else
 		return cons(self:eval(car(exps)),
 					self:listOfValues(cdr(exps)))
@@ -271,12 +272,12 @@ Procedure.__index = Procedure
 
 
 local function primitive_null(exp)
-	return exp == nil
+	return exp == empty_list
 end
 
 
 local function primitive_atom(exp)
-	return not is_pair(exp)
+	return (not is_pair(exp)) and (exp ~= empty_list)
 end
 
 
@@ -503,7 +504,7 @@ end
 
 
 function is_last_exp(exp)
-	return cdr(exp) == nil
+	return cdr(exp) == empty_list
 end
 
 
@@ -669,13 +670,13 @@ end
 
 
 function expaned_clauses(clauses)
-	if clauses == nil then
+	if clauses == empty_list then
 		return 'false'
 	elseif is_cond_else_clause(car(clauses)) then
-		if cdr(clauses) == nil then
+		if cdr(clauses) == empty_list then
 			return sequence_to_exp(cond_action(car(clauses)))
 		else
-			return nil
+			return empty_list
 		end
 	else
 		return make_if(cond_predicate(car(clauses)),
@@ -689,7 +690,7 @@ end
 
 
 function and_to_if(exp)
-	if cdr(exp) == nil then
+	if cdr(exp) == empty_list then
 		return car(exp)
 	else
 		return make_if(car(exp), and_to_if(cdr(exp)), false)
@@ -698,7 +699,7 @@ end
 
 
 function or_to_if(exp)
-	if cdr(exp) == nil then
+	if cdr(exp) == empty_list then
 		return car(exp)
 	else
 		return make_if(car(exp), true, or_to_if(cdr(exp)))
@@ -722,7 +723,7 @@ end
 
 
 function last_exp(sequence)
-	return cdr(sequence) == nil
+	return cdr(sequence) == empty_list
 end
 
 
@@ -744,8 +745,8 @@ end
 
 
 function sequence_to_exp(sequence)
-	if sequence == nil then
-		return nil
+	if sequence == empty_list then
+		return empty_list
 	elseif last_exp(sequence) then
 		return first_exp(sequence)
 	else
