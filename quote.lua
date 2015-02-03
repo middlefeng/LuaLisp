@@ -9,6 +9,7 @@ do
 	local old_type = _ENV.type
 	local old_table = _ENV.table
 	local old_print = _ENV.print
+	local old_tostring = _ENV.tostring
 	
 	_ENV = {}
 	_ENV.list = lisp.list
@@ -20,6 +21,7 @@ do
 	_ENV.type = old_type
 	_ENV.table = old_table
 	_ENV.print = old_print
+	_ENV.tostring = old_tostring
 end
 
 
@@ -143,6 +145,14 @@ function quote(symbols)
 			return list_quote(location)
 		elseif string.byte(symbols, location) == string.byte("\"") then
 			return read_string(location)
+		elseif string.byte(symbols, location) == string.byte(")") then
+			local location_str = "[end]"
+			if location then
+		   		location_str = tostring(location - latest_linebreak + 1)
+		   	end
+
+			error("Syntax error. Unexpected \")\" at line " .. line_num ..
+				  ", location " .. location_str)
 		else
 			return list_symbol(location) 
 		end
