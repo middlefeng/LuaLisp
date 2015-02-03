@@ -7,7 +7,6 @@ local old_type = type
 local old_getmetatable = getmetatable
 local old_setmetatable = setmetatable
 local old_select = select
--- local old_print = print
 
 local _ENV = {}
 _ENV.table = old_table
@@ -17,7 +16,6 @@ _ENV.string = old_string
 _ENV.tostring = old_tostring
 _ENV.type = old_type
 _ENV.select = old_select
-_ENV.print = old_print
 
 
 -------------------------------------------------------------------------
@@ -37,24 +35,23 @@ local empty_list_meta = {
 setmetatable(empty_list, empty_list_meta)
 
 
-local list_tostring
 function list_tostring(list)
+
+	if type(list) ~= "table" then
+		return tostring(list)
+	end
+
+	if list == empty_list then
+		return tostring(empty_list)
+	end
 
 	local result = {}
 	result[1] = "("
 	
-	local function quote(s)
-		if type(s) == "string" then
-			return s
-		else
-			return tostring(s)
-		end
-	end
-	
 	local insert_value
 	function insert_value(sub_list)
 		if sub_list ~= empty_list then
-			table.insert(result, quote(car(sub_list)))
+			table.insert(result, list_tostring(car(sub_list)))
 			table.insert(result, " ")
 			return insert_value(cdr(sub_list))
 		else
@@ -114,13 +111,15 @@ end
 
 
 function is_pair(p)
-	return getmetatable(p) == cons_meta
+	return type(p) == "table" and (p.car ~= nil or p.cdr ~= nil)
 end
 
 
 function cons(a, b)
 	local result = { car = a, cdr = b }
-	setmetatable(result, cons_meta)
+	if set_cons_metatable then
+		setmetatable(result, cons_meta)
+	end
 	return result
 end
 
