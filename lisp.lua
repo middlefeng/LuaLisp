@@ -25,6 +25,17 @@ _ENV.print = old_print
 
 empty_list = {}
 
+local function empty_list_to_string(empty_list)
+	return "()"
+end
+
+local empty_list_meta = {
+	__tostring = empty_list_to_string
+}
+
+
+setmetatable(empty_list, empty_list_meta)
+
 
 local list_tostring
 function list_tostring(list)
