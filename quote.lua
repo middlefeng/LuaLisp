@@ -52,7 +52,7 @@ function quote(symbols)
 			end
 			return false
 		end
-		
+
 		location = location - 1
 		repeat
 			location = location + 1
@@ -62,6 +62,15 @@ function quote(symbols)
 				if current == string.byte("\n") then
 					line_num = line_num + 1
 					latest_linebreak = location
+				end
+				if current == string.byte(";") then
+					while location + 1 <= string.len(symbols) do
+						current = string.byte(symbols, location + 1)
+						location = location + 1
+						if current == string.byte("\n") then
+							break
+						end
+					end
 				end
 			else
 				current = nil
