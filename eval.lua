@@ -657,7 +657,7 @@ end
 
 
 function cond_to_if(exp)
-	return expaned_clauses(cond_clauses(exp))
+	return expand_clauses(cond_clauses(exp))
 end
 
 
@@ -679,7 +679,7 @@ end
 
 
 
-function expaned_clauses(clauses)
+function expand_clauses(clauses)
 	if clauses == empty_list then
 		return 'false'
 	elseif is_cond_else_clause(car(clauses)) then
