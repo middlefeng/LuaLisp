@@ -17,4 +17,4 @@
 
 ;((lambda () (append_v1  '(1 2))))
 (print (tostring car))
-(append_list '(11 22))
+((append_list '(11 22)) "abc")
