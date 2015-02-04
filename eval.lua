@@ -34,6 +34,7 @@ do
 	_ENV.cdr = lisp.cdr
 	_ENV.cadr = lisp.cadr
 	_ENV.list = lisp.list
+	_ENV.length = lisp.length
 	_ENV.map = lisp.map
 	_ENV.empty_list = lisp.empty_list
 	_ENV.list_unpack = lisp.list_unpack
@@ -381,6 +382,7 @@ Procedure.primitiveProcedures = {
 	["cdr"] = Procedure:new(nil, cdr, nil, 'primitive', 'cdr'),
 	["cons"] = Procedure:new(nil, cons, nil, 'primitive', 'cons'),
 	["list"] = Procedure:new(nil, list, nil, 'primitive', 'list'),
+	["length"] = Procedure:new(nil, length, nil, 'primitive', 'length'),
 	["null?"] = Procedure:new(nil, primitive_null, nil, 'primitive', 'null?'),
 	["pair?"] = Procedure:new(nil, is_pair, nil, 'primitive', 'pair?'),
 	["atom?"] = Procedure:new(nil, primitive_atom, nil, 'primitive', 'atom?'),
