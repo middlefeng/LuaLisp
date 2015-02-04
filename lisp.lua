@@ -35,7 +35,7 @@ local empty_list_meta = {
 setmetatable(empty_list, empty_list_meta)
 
 
-function list_tostring(list)
+function list_tostring(list, wrap)
 
 	if type(list) ~= "table" then
 		return tostring(list)
@@ -47,12 +47,14 @@ function list_tostring(list)
 
 	local result = {}
 	result[1] = "("
+
+	local delimitor = wrap and "\n" or " "
 	
 	local insert_value
 	function insert_value(sub_list)
 		if sub_list ~= empty_list then
-			table.insert(result, list_tostring(car(sub_list)))
-			table.insert(result, " ")
+			table.insert(result, list_tostring(car(sub_list), false))
+			table.insert(result, delimitor)
 			return insert_value(cdr(sub_list))
 		else
 			table.remove(result)

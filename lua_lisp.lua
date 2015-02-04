@@ -17,7 +17,8 @@ end
 local lisp_src = file:read("a")
 local s_exp = quote.quote(lisp_src)
 
-print(lisp.list_tostring(s_exp))
+print("Source: ")
+print(lisp.list_tostring(s_exp, true) .. "\n")
 
 local env = eval.Enviornment.initEnviornment()
 local value = env:evalSequence(s_exp)
