@@ -130,7 +130,6 @@ function quote(symbols)
 	--
 	--  forward declaration
 	--
-	local list_item
 	local list_quote
 	local read_string
 	local sub_list
@@ -138,7 +137,7 @@ function quote(symbols)
 	--
 	--  parse list item
 	--
-	function list_item(location)
+	local function list_item(location)
 		if string.byte(symbols, location) == string.byte("(") then
 			return sub_list(location)
 		elseif string.byte(symbols, location) == string.byte("'") then

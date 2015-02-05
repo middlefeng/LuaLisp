@@ -50,8 +50,7 @@ function list_tostring(list, wrap)
 
 	local delimitor = wrap and "\n" or " "
 	
-	local insert_value
-	function insert_value(sub_list)
+	local function insert_value(sub_list)
 		if sub_list ~= empty_list then
 			table.insert(result, list_tostring(car(sub_list), false))
 			table.insert(result, delimitor)
@@ -73,8 +72,7 @@ local cons_meta = {
 }
 
 
-local list_eq
-function list_eq(a, b)
+local function list_eq(a, b)
 	if a == nil and b == nil then
 		return true
 	elseif getmetatable(a) ~= cons_meta and
@@ -99,8 +97,7 @@ end
 --                    -- basic pair operations --                      --
 
 local function sub_stack(...)
-	local sub_stack_itr
-	function sub_stack_itr(start, ...)
+	local function sub_stack_itr(start, ...)
 		if start > select("#", ...) then
 			return
 		else
