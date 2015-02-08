@@ -69,7 +69,9 @@ function Frame:new()
 end
 
 
-local nil_val = {}
+local nil_val = { __tostring = function(v) return 'Nil' end }
+setmetatable(nil_val, nil_val)
+
 
 
 function Frame:newFromList(varNames, varValues)
