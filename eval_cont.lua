@@ -1,0 +1,302 @@
+
+do
+
+	local lisp = require "lisp"
+	local eval = require "eval"
+	local old_error = error
+
+	_ENV = {}
+	_ENV.lisp = lisp
+	_ENV.error = old_error
+	_ENV.eval = eval
+
+end
+
+
+
+Object = {}
+Object.__index = Object
+
+function Object:new(o)
+	local result = o or {}
+	setmetatable(result, self)
+	return result
+end
+
+
+
+
+
+Environment = {}
+Environment.__index = Environment
+
+
+function Environment:new(enclosing, params, args)
+	local result = o or {}
+	result.enclosing = enclosing
+
+	local function addProp(nameList, valueList)
+		if nameList ~= nil and nameList ~= empty_list then
+			local value = car(valueList) or nil_val
+			result[car(nameList)] = value
+			return addProp(cdr(nameList), cdr(valueList))
+		end
+	end
+	addProp(params, args)
+
+	setmetatable(result, self)
+	return result
+end
+
+
+function Environment:lookup(name, k)
+	if self.binds[name] then
+		return k:resume(self.binds[name])
+	elseif self.enclosing then
+		return self.enclosing:lookup(name, k)
+	else
+		error("Unknown varaible: " .. name)
+	end
+end
+
+
+
+function Environment:update(name, val, k)
+	if self.binds[name] then
+		self.binds[name] = val
+		return k:resume(val)
+	elseif self.enclosing then
+		return self.enclosing:update(name, val, k)
+	else
+		error("Update unknown varaible: " .. name)
+	end
+end
+
+
+
+
+LispFunction = {}
+LispFunction.__index = LispFunction
+
+
+function LispFunction:new(params, body, env)
+	local result = {}
+	result.params = params
+	result.body = body
+	result.env = env
+	setmetatable(result, self)
+	return result
+end
+
+
+function LispFunction:invoke(args, env, k)
+	local extended_env = Environment:new(self.env, self.params, args)
+	eval_begin(self.body, extended_env, k)
+end
+
+
+
+
+
+
+Continuation = Object:new()
+
+
+
+
+ContinuationIf = Continuation:new()
+
+function ContinuationIf:resume(val)
+	local eval_val
+	if val then
+		eval_val = self.true_exp
+	else
+		eval_val = self.false_exp
+	end
+
+	return eval(eval_val, self.env, self.continuation)
+end
+
+
+
+
+ContinuationBegin = Continuation:new()
+
+function ContinuationBegin:resume(val)
+	return eval(val, self.env, lisp.cdr(self.exp_list), self.continuation)
+end
+
+
+
+
+ContinuationSet = Continuation:new()
+
+function ContinuationSet:resume(val)
+end
+
+
+
+
+ContinuationEvalFunction = {}
+ContinuationEvalFunction.__index = ContinuationEvalFunction
+
+
+function ContinuationEvalFunction:new(exp_list, env, k)
+	local result = {}
+	result.exp_list = exp_list
+	result.env = env
+	result.continuation = k
+	setmetatable(result, self)
+	return result
+end
+
+
+function ContinuationEvalFunction:resume(func)
+	eval_arguments(self.exp_list, self.env,
+				   ContinuationApply:new(func, self.env, self.continuation))
+end
+
+
+
+ContinuationArguments = {}
+ContinuationArguments.__index = ContinuationArguments
+
+
+function ContinuationArguments:new(exp_list, env, k)
+	local result = {}
+	result.exp_list = exp_list
+	result.env = env
+	result.continuation = k
+	setmetatable(result, self)
+	return result
+end
+
+
+function ContinuationArguments:resume(val)
+	eval_arguments(lisp.cdr(self.exp_list), self.env,
+				   ContinuationGather:new(val, self.continuation))
+end
+
+
+
+
+ContinuationGather = {}
+ContinuationGather.__index = ContinuationGather
+
+
+function ContinuationGather:new(exp_list, k)
+	local result = {}
+	result.exp_list = exp_list
+	result.continuation = k
+	setmetatable(result, self)
+	return result
+end
+
+
+function ContinuationGather:resume(val)
+	self.continuation:resume(lisp.cons(self.exp_list, val))
+end
+
+
+
+
+ContinuationApply = {}
+ContinuationApply.__index = ContinuationApply
+
+
+function ContinuationApply:new(func, env, k)
+	local result = {}
+	result.func = func
+	result.env = env
+	result.continuation = k
+	setmetatable(result, self)
+	return result
+end
+
+
+function ContinuationApply:resume(val)
+	self.func:invoke(val, self.env, self.continuation)
+end
+
+
+
+
+function eval(exp, env, k)
+	if eval.is_variable(exp) then
+		return eval_variable(exp, env, k)
+	elseif eval.is_self_evaluating(exp) then
+		return eval_quote(exp, env, k)
+	elseif eval.is_quote(exp) then
+		return eval_quote(lisp.cadr(exp), env, k)
+	elseif eval.is_if(exp) then
+		return eval_if(lisp.cadr(exp),
+					   lisp.cadr(lisp.cdr(exp)),
+					   lisp.cadr(lisp.cdr(lisp.cdr(exp))),
+					   env, k)
+	else
+		return eval_application(lisp.car(exp), lisp.cdr(exp), env, k)
+	end
+end
+
+
+function eval_quote(val, env, k)
+	return k:resume(val)
+end
+
+
+function eval_variable(name, env, k)
+	return env:lookup(name, k)
+end
+
+
+function eval_if(cond_exp, true_exp, false_exp, env, k)
+	return eval(cond_exp, env,
+				ContinuationIf:new({ continuation = k,
+				 					 true_exp = true_exp,
+				 					 false_exp = false_exp,
+				 					 env = env }))
+end
+
+
+
+function eval_begin(exp_list, env, k)
+	if lisp.is_pair(exp_list) then
+		if lisp.is_pair(lisp.cdr(exp_list)) then
+			return eval(lisp.car(exp_list), env, ContinuationBegin:new({
+						continuation = k,
+						exp_list = exp_list,
+						env = env
+					}))
+		else
+			return eval(lisp.car(exp_list), env, k)
+		end
+	else
+		return k:resume(lisp.empty_list)
+	end
+end
+
+
+
+function eval_lambda(parms, exp_list, env, k)
+	return k:resume(LispFunction:new(params, exp_list, env))
+end
+
+
+function eval_arguments(args, env, k)
+	if lisp.is_pair(args) then
+		return eval(lisp.car(args), env, ContinuationArguments:new(args, env, k))
+	else
+		return k:resume(lisp.empty_list)
+	end
+end
+
+
+
+function eval_application(func, args, env, k)
+	return eval(func, env, ContinuationEvalFunction:new(args, env, k))
+end
+
+
+
+
+
