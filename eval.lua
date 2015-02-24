@@ -165,7 +165,6 @@ function Enviornment:eval(exp)
 	elseif is_if(exp) then
 		return self:evalIf(exp)
 	elseif is_and(exp) then
-		print(and_to_if(cdr(exp)))
 		return self:eval(and_to_if(cdr(exp)))
 	elseif is_or(exp) then
 		return self:eval(or_to_if(cdr(exp)))

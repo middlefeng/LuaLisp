@@ -11,6 +11,7 @@
 	 ((lambda (x) (+ a x)) 1)))
 
 (print "Result 2" let_result)
+(print "Length" (length (list let_result, 2, 3)))
 
 
 ((if true * +) 2 3)
