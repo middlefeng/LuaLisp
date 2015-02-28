@@ -2,14 +2,14 @@
 do
 
 	local lisp = require "lisp"
-	local eval = require "eval"
+	local eval_exp = require "eval"
 	local old_error = error
 	local old_setmetatable = setmetatable
 
 	_ENV = {}
 	_ENV.lisp = lisp
 	_ENV.error = old_error
-	_ENV.eval = eval
+	_ENV.eval_exp = eval_exp
 	_ENV.setmetatable = old_setmetatable
 
 end
@@ -37,11 +37,12 @@ Environment.__index = Environment
 function Environment:new(enclosing, params, args)
 	local result = o or {}
 	result.enclosing = enclosing
+	result.binds = {}
 
 	local function addProp(nameList, valueList)
 		if nameList ~= nil and nameList ~= empty_list then
 			local value = car(valueList) or nil_val
-			result[car(nameList)] = value
+			result.binds[car(nameList)] = value
 			return addProp(cdr(nameList), cdr(valueList))
 		end
 	end
@@ -77,7 +78,9 @@ end
 
 
 function Environment.initEnv()
-	return Environment:new(LispPrimitive.primitives)
+	local e = Environment:new()
+	e.binds = LispPrimitive.primitives
+	return e
 end
 
 
@@ -99,7 +102,7 @@ end
 
 function LispFunction:invoke(args, env, k)
 	local extended_env = Environment:new(self.env, self.params, args)
-	eval_begin(self.body, extended_env, k)
+	return eval_begin(self.body, extended_env, k)
 end
 
 
@@ -118,10 +121,8 @@ end
 
 
 function LispPrimitive:invoke(args, env, k)
-	local function func()
-		local r = self.primitive(lisp.list_unpack(args))
-		k:resume(r)
-	end
+	local r = self.primitive(lisp.list_unpack(args))
+	return k:resume(r)
 end
 
 
@@ -166,6 +167,7 @@ end
 
 function ContinuationBottom:resume(val)
 	self.func(val)
+	return val
 end
 
 
@@ -245,8 +247,8 @@ end
 
 
 function ContinuationEvalFunction:resume(func)
-	eval_arguments(self.exp_list, self.env,
-				   ContinuationApply:new(func, self.env, self.continuation))
+	return eval_arguments(self.exp_list, self.env,
+						  ContinuationApply:new(func, self.env, self.continuation))
 end
 
 
@@ -266,8 +268,8 @@ end
 
 
 function ContinuationArguments:resume(val)
-	eval_arguments(lisp.cdr(self.exp_list), self.env,
-				   ContinuationGather:new(val, self.continuation))
+	return eval_arguments(lisp.cdr(self.exp_list), self.env,
+						  ContinuationGather:new(val, self.continuation))
 end
 
 
@@ -287,7 +289,7 @@ end
 
 
 function ContinuationGather:resume(val)
-	self.continuation:resume(lisp.cons(self.exp_list, val))
+	return self.continuation:resume(lisp.cons(self.exp_list, val))
 end
 
 
@@ -308,28 +310,28 @@ end
 
 
 function ContinuationApply:resume(val)
-	self.func:invoke(val, self.env, self.continuation)
+	return self.func:invoke(val, self.env, self.continuation)
 end
 
 
 
 
 function eval(exp, env, k)
-	if eval.is_variable(exp) then
+	if eval_exp.is_variable(exp) then
 		return eval_variable(exp, env, k)
-	elseif eval.is_self_evaluating(exp) then
+	elseif eval_exp.is_self_evaluating(exp) then
 		return eval_quote(exp, env, k)
-	elseif eval.is_quote(exp) then
+	elseif eval_exp.is_quoted(exp) then
 		return eval_quote(lisp.cadr(exp), env, k)
-	elseif eval.is_if(exp) then
+	elseif eval_exp.is_if(exp) then
 		return eval_if(lisp.cadr(exp),
 					   lisp.cadr(lisp.cdr(exp)),
 					   lisp.cadr(lisp.cdr(lisp.cdr(exp))),
 					   env, k)
-	elseif eval.is_begin(exp) then
+	elseif eval_exp.is_begin(exp) then
 		return eval_begin(lisp.cdr(exp), env, k)
-	elseif eval.is_assignment(exp) then
-		return eval_
+	elseif eval_exp.is_assignment(exp) then
+		return eval_set(exp)
 	else
 		return eval_application(lisp.car(exp), lisp.cdr(exp), env, k)
 	end
@@ -394,6 +396,6 @@ function eval_application(func, args, env, k)
 end
 
 
-
+return _ENV
 
 
