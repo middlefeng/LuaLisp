@@ -4,11 +4,13 @@ do
 	local lisp = require "lisp"
 	local eval = require "eval"
 	local old_error = error
+	local old_setmetatable = setmetatable
 
 	_ENV = {}
 	_ENV.lisp = lisp
 	_ENV.error = old_error
 	_ENV.eval = eval
+	_ENV.setmetatable = old_setmetatable
 
 end
 
@@ -144,7 +146,7 @@ function Continuation:new(env, k)
 	result.__index = result
 	result.env = env
 	result.continuation = k
-	setmetatable(resume, self)
+	setmetatable(result, self)
 	return result
 end
 
