@@ -1,10 +1,10 @@
 
 
 local quote = require "quote"
-local eval = require "eval"
+local eval = require "eval_cont"
 local lisp = require "lisp"
 
-lisp.set_cons_metatable = true
+lisp.set_cons_metatable = false
 
 local filename = ...
 local file = io.open(filename, "r")
@@ -21,7 +21,8 @@ print("Source: ")
 print(lisp.list_tostring(s_exp, true) .. "\n")
 
 local env = eval.Enviornment.initEnviornment()
-local value = env:evalSequence(s_exp)
+local bottom_cont = eval.ContinuationBottom:new(print)
+local value = eval.eval_begin(s_exp, env, bottom_cont)
 
 print("> " .. tostring(value))
 

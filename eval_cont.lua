@@ -19,6 +19,7 @@ Object.__index = Object
 
 function Object:new(o)
 	local result = o or {}
+	result.__index = result
 	setmetatable(result, self)
 	return result
 end
@@ -73,6 +74,11 @@ function Environment:update(name, val, k)
 end
 
 
+function Environment.initEnv()
+	return Environment:new(LispPrimitive.primitives)
+end
+
+
 
 
 LispFunction = {}
@@ -97,14 +103,85 @@ end
 
 
 
+LispPrimitive = {}
+LispPrimitive.__index = LispPrimitive
 
 
-Continuation = Object:new()
+function LispPrimitive:new(primitive)
+	local result = {}
+	result.primitive = primitive
+	setmetatable(result, self)
+	return result
+end
+
+
+function LispPrimitive:invoke(args, env, k)
+	local function func()
+		local r = self.primitive(lisp.list_unpack(args))
+		k:resume(r)
+	end
+end
+
+
+LispPrimitive.primitives =
+{
+	["car"] = LispPrimitive:new(lisp.car),
+	["cdr"] = LispPrimitive:new(lisp.cdr),
+	["+"] = LispPrimitive:new(function(a, b) return a + b end)
+}
+
+
+
+
+
+
+Continuation = {}
+Continuation.__index = Continuation
+
+
+function Continuation:new(env, k)
+	local result = {}
+	result.__index = result
+	result.env = env
+	result.continuation = k
+	setmetatable(resume, self)
+	return result
+end
+
+
+
+
+ContinuationBottom = Continuation:new()
+
+
+function ContinuationBottom:new(func)
+	local result = Continuation:new()
+	result.func = func
+	setmetatable(result, self)
+	return result
+end
+
+
+function ContinuationBottom:resume(val)
+	self.func(val)
+end
+
+
 
 
 
 
 ContinuationIf = Continuation:new()
+
+
+function ContinuationIf:new(true_exp, false_exp, env, k)
+	local result = Continuation:new(env, k)
+	result.true_exp = true_exp
+	result.false_exp = false_exp
+	setmetatable(resume, self)
+	return result
+end
+
 
 function ContinuationIf:resume(val)
 	local eval_val
@@ -120,11 +197,24 @@ end
 
 
 
+
+
 ContinuationBegin = Continuation:new()
+
+
+function ContinuationBegin:new(exp_list, env, k)
+	local result = Continuation(env, k)
+	result.exp_list = exp_list
+	setmetatable(result, self)
+	return result;
+end
+
 
 function ContinuationBegin:resume(val)
 	return eval(val, self.env, lisp.cdr(self.exp_list), self.continuation)
 end
+
+
 
 
 
@@ -139,6 +229,7 @@ end
 
 ContinuationEvalFunction = {}
 ContinuationEvalFunction.__index = ContinuationEvalFunction
+setmetatable(ContinuationEvalFunction, Continuation)
 
 
 function ContinuationEvalFunction:new(exp_list, env, k)
@@ -233,6 +324,10 @@ function eval(exp, env, k)
 					   lisp.cadr(lisp.cdr(exp)),
 					   lisp.cadr(lisp.cdr(lisp.cdr(exp))),
 					   env, k)
+	elseif eval.is_begin(exp) then
+		return eval_begin(lisp.cdr(exp), env, k)
+	elseif eval.is_assignment(exp) then
+		return eval_
 	else
 		return eval_application(lisp.car(exp), lisp.cdr(exp), env, k)
 	end
@@ -251,10 +346,7 @@ end
 
 function eval_if(cond_exp, true_exp, false_exp, env, k)
 	return eval(cond_exp, env,
-				ContinuationIf:new({ continuation = k,
-				 					 true_exp = true_exp,
-				 					 false_exp = false_exp,
-				 					 env = env }))
+				ContinuationIf:new(true_exp, false_exp, env, k))
 end
 
 
@@ -262,11 +354,8 @@ end
 function eval_begin(exp_list, env, k)
 	if lisp.is_pair(exp_list) then
 		if lisp.is_pair(lisp.cdr(exp_list)) then
-			return eval(lisp.car(exp_list), env, ContinuationBegin:new({
-						continuation = k,
-						exp_list = exp_list,
-						env = env
-					}))
+			return eval(lisp.car(exp_list), env,
+						ContinuationBegin:new(exp_list, env, k))
 		else
 			return eval(lisp.car(exp_list), env, k)
 		end
@@ -280,6 +369,12 @@ end
 function eval_lambda(parms, exp_list, env, k)
 	return k:resume(LispFunction:new(params, exp_list, env))
 end
+
+
+
+function eval_set()
+end
+
 
 
 function eval_arguments(args, env, k)
