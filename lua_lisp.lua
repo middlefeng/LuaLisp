@@ -20,7 +20,7 @@ local s_exp = quote.quote(lisp_src)
 print("Source: ")
 print(lisp.list_tostring(s_exp, true) .. "\n")
 
-local env = eval.Environment.initEnviornment()
+local env = eval.Enviornment.initEnviornment()
 local value = env:evalSequence(s_exp)
 
 print("> " .. tostring(value))
