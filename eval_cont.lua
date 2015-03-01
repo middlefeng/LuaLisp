@@ -42,13 +42,17 @@ Environment = {}
 Environment.__index = Environment
 
 
+local nil_val = { __tostring = function(v) return 'Nil' end }
+setmetatable(nil_val, nil_val)
+
+
 function Environment:new(enclosing, params, args)
 	local result = o or {}
 	result.enclosing = enclosing
 	result.binds = {}
 
 	local function addProp(nameList, valueList)
-		if nameList ~= nil and nameList ~= empty_list then
+		if nameList ~= nil and nameList ~= lisp.empty_list then
 			local value = car(valueList) or nil_val
 			result.binds[car(nameList)] = value
 			return addProp(cdr(nameList), cdr(valueList))
@@ -83,6 +87,13 @@ function Environment:update(name, val, k)
 		error("Update unknown varaible: " .. name)
 	end
 end
+
+
+function Environment:define(var, val)
+	val = val or nil_val
+	self.binds[var] = val
+end
+
 
 
 function Environment.initEnv()
@@ -233,7 +244,7 @@ ContinuationBegin = Continuation:new()
 
 
 function ContinuationBegin:new(exp_list, env, k)
-	local result = Continuation(env, k)
+	local result = Continuation:new(env, k)
 	result.exp_list = exp_list
 	setmetatable(result, self)
 	return result;
@@ -241,7 +252,8 @@ end
 
 
 function ContinuationBegin:resume(val)
-	return eval(val, self.env, lisp.cdr(self.exp_list), self.continuation)
+	return eval_begin(lisp.cdr(self.exp_list),
+					  self.env, self.continuation)
 end
 
 
@@ -251,8 +263,36 @@ end
 
 ContinuationSet = Continuation:new()
 
-function ContinuationSet:resume(val)
+
+function ContinuationSet:new(name, env, k)
+	local result = Continuation:new(env, k)
+	result.set_name = name
+	setmetatable(result, self)
+	return result
 end
+
+
+function ContinuationSet:resume(val)
+	self.env:update(self.set_name, val, self.env, self.continuation)
+end
+
+
+
+ContinuationDefine = Continuation:new()
+
+
+function ContinuationDefine:new(name, env, k)
+	local result = Continuation:new(env, k)
+	result.define_name = name
+	setmetatable(result, self)
+	return result
+end
+
+
+function ContinuationDefine:resume(val)
+	self.env:define(self.set_name, val, self.env, self.continuation)
+end
+
 
 
 
@@ -366,7 +406,9 @@ function eval(exp, env, k)
 	elseif is_begin(exp) then
 		return eval_begin(lisp.cdr(exp), env, k)
 	elseif is_assignment(exp) then
-		return eval_set(exp)
+		return eval_set(lisp.cadr(exp), lisp.cadr(lisp.cdr(exp)), env, k)
+	elseif is_lambda(exp) then
+		return eval_lambda(lisp.cadr(exp), lisp.cdr(lisp.cdr(exp)), env, k)
 	else
 		return eval_application(lisp.car(exp), lisp.cdr(exp), env, k)
 	end
@@ -411,7 +453,8 @@ end
 
 
 
-function eval_set()
+function eval_set(name, exp, env, k)
+	return eval(exp, ContinuationSet:new(name, env, k))
 end
 
 
@@ -525,7 +568,7 @@ end
 
 
 function is_last_exp(exp)
-	return cdr(exp) == empty_list
+	return cdr(exp) ==lisp.empty_list
 end
 
 
