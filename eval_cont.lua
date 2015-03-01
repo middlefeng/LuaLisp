@@ -2,15 +2,19 @@
 do
 
 	local lisp = require "lisp"
-	local eval_exp = require "eval"
 	local old_error = error
 	local old_setmetatable = setmetatable
+
+	local old_type = type
+	local old_string = string
 
 	_ENV = {}
 	_ENV.lisp = lisp
 	_ENV.error = old_error
 	_ENV.eval_exp = eval_exp
 	_ENV.setmetatable = old_setmetatable
+	_ENV.type = old_type
+	_ENV.string = old_string
 
 end
 
@@ -28,6 +32,10 @@ end
 
 
 
+
+
+--------------------------------------------------------------------------------------------
+------------------------------          Environment           ------------------------------
 
 
 Environment = {}
@@ -84,6 +92,17 @@ function Environment.initEnv()
 end
 
 
+------------------------------          Environment           ------------------------------
+--------------------------------------------------------------------------------------------
+
+
+
+
+
+
+--------------------------------------------------------------------------------------------
+------------------------------            Function            ------------------------------
+
 
 
 LispFunction = {}
@@ -134,8 +153,15 @@ LispPrimitive.primitives =
 }
 
 
+------------------------------            Function            ------------------------------
+--------------------------------------------------------------------------------------------
 
 
+
+
+
+--------------------------------------------------------------------------------------------
+------------------------------          Continuation          ------------------------------
 
 
 Continuation = {}
@@ -314,23 +340,32 @@ function ContinuationApply:resume(val)
 end
 
 
+------------------------------          Continuation          ------------------------------
+--------------------------------------------------------------------------------------------
+
+
+
+
+--------------------------------------------------------------------------------------------
+------------------------------           Evaluator            ------------------------------
+
 
 
 function eval(exp, env, k)
-	if eval_exp.is_variable(exp) then
+	if is_variable(exp) then
 		return eval_variable(exp, env, k)
-	elseif eval_exp.is_self_evaluating(exp) then
+	elseif is_self_evaluating(exp) then
 		return eval_quote(exp, env, k)
-	elseif eval_exp.is_quoted(exp) then
+	elseif is_quoted(exp) then
 		return eval_quote(lisp.cadr(exp), env, k)
-	elseif eval_exp.is_if(exp) then
+	elseif is_if(exp) then
 		return eval_if(lisp.cadr(exp),
 					   lisp.cadr(lisp.cdr(exp)),
 					   lisp.cadr(lisp.cdr(lisp.cdr(exp))),
 					   env, k)
-	elseif eval_exp.is_begin(exp) then
+	elseif is_begin(exp) then
 		return eval_begin(lisp.cdr(exp), env, k)
-	elseif eval_exp.is_assignment(exp) then
+	elseif is_assignment(exp) then
 		return eval_set(exp)
 	else
 		return eval_application(lisp.car(exp), lisp.cdr(exp), env, k)
@@ -394,6 +429,132 @@ end
 function eval_application(func, args, env, k)
 	return eval(func, env, ContinuationEvalFunction:new(args, env, k))
 end
+
+
+------------------------------           Evaluator            ------------------------------
+--------------------------------------------------------------------------------------------
+
+
+
+
+--------------------------------------------------------------------------------------------
+------------------------------    expression predicates       ------------------------------
+
+
+function is_self_evaluating(exp)
+	return (type(exp) == 'string' and string.sub(exp, 1, 1) == "'") or
+		    type(exp) == 'number' or type(exp) == 'boolean' or
+		    false
+end
+
+
+
+function is_variable(exp)
+	return (type(exp) == 'string' and (not is_self_evaluating(exp)))
+end
+
+
+local function is_tagged(exp, tag)
+	return lisp.is_pair(exp) and
+		   lisp.car(exp) == tag
+end
+
+
+function is_quoted(exp)
+	return is_tagged(exp, 'quote')
+end
+
+
+
+function is_assignment(exp)
+	return is_tagged(exp, 'set!')
+end
+
+
+
+function is_definition(exp)
+	return is_tagged(exp, 'define')
+end
+
+
+
+function is_if(exp)
+	return is_tagged(exp, 'if')
+end
+
+
+function is_and(exp)
+	return is_tagged(exp, 'and')
+end
+
+
+
+function is_or(exp)
+	return is_tagged(exp, 'or')
+end
+
+
+
+function is_not(exp)
+	return is_tagged(exp, 'not')
+end
+
+
+
+function is_lambda(exp)
+	return is_tagged(exp, 'lambda')
+end
+
+
+
+function is_begin(exp)
+	return is_tagged(exp, 'begin')
+end
+
+
+
+function is_cond(exp)
+	return is_tagged(exp, 'cond')
+end
+
+
+function is_application(exp)
+	return is_pair(exp)
+end
+
+
+
+function is_last_exp(exp)
+	return cdr(exp) == empty_list
+end
+
+
+
+function is_delay(exp)
+	return is_tagged(exp, 'delay')
+end
+
+
+
+function is_force(exp)
+	return is_tagged(exp, 'force')
+end
+
+
+
+function is_cons_stream(exp)
+	return is_tagged(exp, 'cons-stream')
+end
+
+
+function is_let(exp)
+	return is_tagged(exp, 'let')
+end
+
+
+------------------------------    expression predicates       ------------------------------
+--------------------------------------------------------------------------------------------
+
 
 
 return _ENV
