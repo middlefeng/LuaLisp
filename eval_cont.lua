@@ -89,9 +89,14 @@ function Environment:update(name, val, k)
 end
 
 
-function Environment:define(var, val)
-	val = val or nil_val
-	self.binds[var] = val
+function Environment:define(var, val, k)
+	if self.binds[name] then
+		error("Redefine variable: " .. var)
+	else
+		val = val or nil_val
+		self.binds[var] = val
+		return k:resume(val)
+	end
 end
 
 
@@ -273,7 +278,7 @@ end
 
 
 function ContinuationSet:resume(val)
-	self.env:update(self.set_name, val, self.env, self.continuation)
+	return self.env:update(self.set_name, val, self.continuation)
 end
 
 
@@ -290,7 +295,7 @@ end
 
 
 function ContinuationDefine:resume(val)
-	self.env:define(self.set_name, val, self.env, self.continuation)
+	return self.env:define(self.define_name, val, self.continuation)
 end
 
 
@@ -386,6 +391,269 @@ end
 
 
 
+
+
+--------------------------------------------------------------------------------------------
+------------------------------           Eval Rules           ------------------------------
+
+
+function text_of_quotation(exp)
+	return cadr(exp)
+end
+
+
+
+--- assignment
+
+
+function assignment_variable(exp)
+	return cadr(exp)
+end
+
+
+
+function assignment_value(exp)
+	return cadr(cdr(exp))
+end
+
+
+
+--- lambda / function
+
+
+function make_lambda(params, body)
+	return cons('lambda', cons(params, body))
+end
+
+
+function definition_var(exp)
+	local var = lisp.cadr(exp)
+	if lisp.is_pair(var) then
+		return lisp.car(var)
+	else
+		return var
+	end
+end
+
+
+
+function definition_val(exp)
+	local var = lisp.cadr(exp)
+	if lisp.is_pair(var) then
+		local param = lisp.cdr(lisp.cadr(exp))
+		local body = lisp.cdr(lisp.cdr(exp))
+		return make_lambda(param, body)
+	else
+		return lisp.cadr(lisp.cdr(exp))
+	end
+end
+
+
+
+function lambda_param(exp)
+	return cadr(exp)
+end
+
+
+
+function lambda_body(exp)
+	return cdr(cdr(exp))
+end
+
+
+
+--- if / if-else
+
+
+function if_predicate(exp)
+	return cadr(exp)
+end
+
+
+
+function if_consequent(exp)
+	return cadr(cdr(exp))
+end
+
+
+
+function if_alternative(exp)
+	local alt = cadr(cdr(cdr(exp)))
+	if alt then
+		return alt
+	else
+		return 'false'
+	end
+end
+
+
+local function make_if(predicate, consequent, alternative)
+	return list('if', predicate, consequent, alternative)
+end
+
+
+--- cond
+
+
+function cond_clauses(exp)
+	return cdr(exp)
+end
+
+
+
+function cond_to_if(exp)
+	return expand_clauses(cond_clauses(exp))
+end
+
+
+
+function cond_predicate(clause)
+	return car(clause)
+end
+
+
+
+function cond_action(clause)
+	return cdr(clause)
+end
+
+
+function is_cond_else_clause(clause)
+	return cond_predicate(clause) == 'else'
+end
+
+
+
+function expand_clauses(clauses)
+	if clauses == empty_list then
+		return 'false'
+	elseif is_cond_else_clause(car(clauses)) then
+		if cdr(clauses) == empty_list then
+			return sequence_to_exp(cond_action(car(clauses)))
+		else
+			return empty_list
+		end
+	else
+		return make_if(cond_predicate(car(clauses)),
+					   sequence_to_exp(cond_action(car(clauses))),
+					   expand_clauses(cdr(clauses)))
+	end
+end
+
+
+--- relation
+
+
+function and_to_if(exp)
+	if cdr(exp) == empty_list then
+		return car(exp)
+	else
+		return make_if(car(exp), and_to_if(cdr(exp)), false)
+	end
+end
+
+
+function or_to_if(exp)
+	if cdr(exp) == empty_list then
+		return car(exp)
+	else
+		return make_if(car(exp), true, or_to_if(cdr(exp)))
+	end
+end
+
+
+function not_to_if(exp)
+	return make_if(car(exp), false, true)
+end
+
+
+
+--- sequence
+
+
+function first_exp(sequence)
+	return car(sequence)
+end
+
+
+
+function last_exp(sequence)
+	return cdr(sequence) == empty_list
+end
+
+
+
+function rest_exp(sequence)
+	return cdr(sequence)
+end
+
+
+
+function begin_actions(exp)
+	return cdr(exp)
+end
+
+
+local function make_begin(sequence)
+	return cons('begin', sequence)
+end
+
+
+function sequence_to_exp(sequence)
+	if sequence == empty_list then
+		return empty_list
+	elseif last_exp(sequence) then
+		return first_exp(sequence)
+	else
+		return make_begin(sequence)
+	end
+end
+
+
+--- let
+
+
+function let_to_lambda_apply(exp)
+	local lambda = let_to_lambda(exp)
+	local arguments = let_arguments(exp)
+	return cons(lambda, arguments)
+end
+
+
+
+function let_to_lambda(exp)
+	local param = let_lambda_parameter(exp)
+	local body = let_lambda_body(exp)
+	return make_lambda(param, body)
+end
+
+
+
+function let_lambda_parameter(exp)
+	return map(car, cadr(exp))
+end
+
+
+function let_arguments(exp)
+	return map(cadr, cadr(exp))
+end
+
+
+function let_lambda_body(exp)
+	return cdr(cdr(exp))
+end
+
+
+------------------------------           Eval Rules           ------------------------------
+--------------------------------------------------------------------------------------------
+
+
+
+
+
+
+
+
 --------------------------------------------------------------------------------------------
 ------------------------------           Evaluator            ------------------------------
 
@@ -407,6 +675,8 @@ function eval(exp, env, k)
 		return eval_begin(lisp.cdr(exp), env, k)
 	elseif is_assignment(exp) then
 		return eval_set(lisp.cadr(exp), lisp.cadr(lisp.cdr(exp)), env, k)
+	elseif is_definition(exp) then
+		return eval_definition(exp, env, k)
 	elseif is_lambda(exp) then
 		return eval_lambda(lisp.cadr(exp), lisp.cdr(lisp.cdr(exp)), env, k)
 	else
@@ -455,6 +725,14 @@ end
 
 function eval_set(name, exp, env, k)
 	return eval(exp, ContinuationSet:new(name, env, k))
+end
+
+
+
+function eval_definition(exp, env, k)
+	local name = definition_var(exp)
+	local val_exp = definition_val(exp)
+	return eval(val_exp, env, ContinuationDefine:new(name, env, k))
 end
 
 
