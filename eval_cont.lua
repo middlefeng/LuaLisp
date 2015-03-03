@@ -4,6 +4,7 @@ do
 	local lisp = require "lisp"
 	local old_error = error
 	local old_setmetatable = setmetatable
+	local old_select = select 
 
 	local old_type = type
 	local old_string = string
@@ -15,6 +16,7 @@ do
 	_ENV.setmetatable = old_setmetatable
 	_ENV.type = old_type
 	_ENV.string = old_string
+	_ENV.select = old_select
 
 end
 
@@ -117,6 +119,96 @@ end
 
 
 --------------------------------------------------------------------------------------------
+------------------------------        Primitive Helper        ------------------------------
+
+
+
+local function primitive_null(exp)
+	return exp == empty_list
+end
+
+
+local function primitive_atom(exp)
+	return (not is_pair(exp)) and (exp ~= empty_list)
+end
+
+
+local function primitive_add(...)
+	local result = 0
+	for i = 1, select('#', ...) do
+		result = result + select(i, ...)
+	end
+	return result
+end
+
+
+
+local function primitive_sub(...)
+	local result = select(1, ...)
+	for i = 2, select('#', ...) do
+		result = result - select(i, ...)
+	end
+	return result
+end
+
+
+
+local function primitive_mul(...)
+	local result = 1
+	for i = 1, select('#', ...) do
+		result = result * select(i, ...)
+	end
+	return result
+end
+
+
+
+local function primitive_div(...)
+	local result = select('#', ...)
+	for i = 2, select('#', ...) do
+		result = result + select(i, ...)
+	end
+	return result
+end
+
+
+
+local function primitive_algebra(oper)
+	if oper == '+' then
+		return primitive_add
+	elseif oper == '-' then
+		return primitive_sub
+	elseif oper == '*' then
+		return primitive_mul
+	elseif oper == "/" then
+		return primitive_div
+	elseif oper == "==" then
+		return function(v1, v2) return v1 == v2 end
+	elseif oper == "<" then
+		return function(v1, v2) return v1 < v2 end
+	elseif oper == ">" then
+		return function(v1, v2) return v1 > v2 end
+	end
+end
+
+
+local function primitive_tostring(list)
+	if is_pair(list) then
+		return list_tostring(list)
+	end
+
+	return tostring(list)
+end
+
+
+------------------------------        Primitive Helper        ------------------------------
+--------------------------------------------------------------------------------------------
+
+
+
+
+
+--------------------------------------------------------------------------------------------
 ------------------------------            Function            ------------------------------
 
 
@@ -165,7 +257,13 @@ LispPrimitive.primitives =
 {
 	["car"] = LispPrimitive:new(lisp.car),
 	["cdr"] = LispPrimitive:new(lisp.cdr),
-	["+"] = LispPrimitive:new(function(a, b) return a + b end)
+	["+"] = LispPrimitive:new(primitive_algebra('+')),
+	["-"] = LispPrimitive:new(primitive_algebra('-')),
+	["*"] = LispPrimitive:new(primitive_algebra('*')),
+	["/"] = LispPrimitive:new(primitive_algebra('/')),
+	["eq?"] = LispPrimitive:new(primitive_algebra('==')),
+	["<"] = LispPrimitive:new(primitive_algebra('<')),
+	[">"] = LispPrimitive:new(primitive_algebra('>'))
 }
 
 
