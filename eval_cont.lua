@@ -126,7 +126,7 @@ end
 
 
 local function primitive_null(exp)
-	return exp == empty_list
+	return exp == lisp.empty_list
 end
 
 
@@ -218,12 +218,18 @@ end
 LispFunction = {}
 LispFunction.__index = LispFunction
 
+LispFunction.__tostring = function(proc)
+	return "[Procedure: " .. lisp.list_tostring(proc.params) .. " " ..
+			lisp.list_tostring(proc.body) .. "]"
+end
+
 
 function LispFunction:new(params, body, env)
 	local result = {}
 	result.params = params
 	result.body = body
 	result.env = env
+	result.name = name
 	setmetatable(result, self)
 	return result
 end
@@ -241,9 +247,15 @@ LispPrimitive = {}
 LispPrimitive.__index = LispPrimitive
 
 
-function LispPrimitive:new(primitive)
+LispPrimitive.__tostring = function(proc)
+	return "[Primitive: " .. proc.name .. "]"
+end
+
+
+function LispPrimitive:new(primitive, name)
 	local result = {}
 	result.primitive = primitive
+	result.name = name
 	setmetatable(result, self)
 	return result
 end
@@ -257,21 +269,22 @@ end
 
 LispPrimitive.primitives =
 {
-	["car"] = LispPrimitive:new(lisp.car),
-	["cdr"] = LispPrimitive:new(lisp.cdr),
-	["cons"] = LispPrimitive:new(lisp.cons),
-	["print"] = LispPrimitive:new(print_lua),
-	["list"] = LispPrimitive:new(lisp.list),
-	["atom?"] = LispPrimitive:new(primitive_atom),
-	["pair?"] = LispPrimitive:new(lisp.is_pair),
-	["tostring"] = LispPrimitive:new(primitive_tostring),
-	["+"] = LispPrimitive:new(primitive_algebra('+')),
-	["-"] = LispPrimitive:new(primitive_algebra('-')),
-	["*"] = LispPrimitive:new(primitive_algebra('*')),
-	["/"] = LispPrimitive:new(primitive_algebra('/')),
-	["eq?"] = LispPrimitive:new(primitive_algebra('==')),
-	["<"] = LispPrimitive:new(primitive_algebra('<')),
-	[">"] = LispPrimitive:new(primitive_algebra('>'))
+	["car"] = LispPrimitive:new(lisp.car, "car"),
+	["cdr"] = LispPrimitive:new(lisp.cdr, "cdr"),
+	["cons"] = LispPrimitive:new(lisp.cons, "cons"),
+	["print"] = LispPrimitive:new(print_lua, "print"),
+	["list"] = LispPrimitive:new(lisp.list, "list"),
+	["atom?"] = LispPrimitive:new(primitive_atom, "atom?"),
+	["pair?"] = LispPrimitive:new(lisp.is_pair, "pair?"),
+	["null?"] = LispPrimitive:new(primitive_null, "null?"),
+	["tostring"] = LispPrimitive:new(primitive_tostring, "tostring"),
+	["+"] = LispPrimitive:new(primitive_algebra('+'), "+"),
+	["-"] = LispPrimitive:new(primitive_algebra('-'), "-"),
+	["*"] = LispPrimitive:new(primitive_algebra('*'), "*"),
+	["/"] = LispPrimitive:new(primitive_algebra('/'), "/"),
+	["eq?"] = LispPrimitive:new(primitive_algebra('=='), "eq?"),
+	["<"] = LispPrimitive:new(primitive_algebra('<'), "<"),
+	[">"] = LispPrimitive:new(primitive_algebra('>'), ">")
 }
 
 
@@ -631,17 +644,17 @@ end
 
 
 function expand_clauses(clauses)
-	if clauses == empty_list then
+	if clauses == lisp.empty_list then
 		return 'false'
 	elseif is_cond_else_clause(lisp.car(clauses)) then
-		if lisp.cdr(clauses) == empty_list then
+		if lisp.cdr(clauses) == lisp.empty_list then
 			return sequence_to_exp(cond_action(lisp.car(clauses)))
 		else
-			return empty_list
+			return lisp.empty_list
 		end
 	else
 		return make_if(cond_predicate(lisp.car(clauses)),
-					   sequence_to_exp(cond_action(car(clauses))),
+					   sequence_to_exp(cond_action(lisp.car(clauses))),
 					   expand_clauses(lisp.cdr(clauses)))
 	end
 end
@@ -651,7 +664,7 @@ end
 
 
 function and_to_if(exp)
-	if lisp.cdr(exp) == empty_list then
+	if lisp.cdr(exp) == lisp.empty_list then
 		return lisp.car(exp)
 	else
 		return make_if(lisp.car(exp), and_to_if(lisp.cdr(exp)), false)
@@ -660,7 +673,7 @@ end
 
 
 function or_to_if(exp)
-	if lisp.cdr(exp) == empty_list then
+	if lisp.cdr(exp) == lisp.empty_list then
 		return lisp.car(exp)
 	else
 		return make_if(lisp.car(exp), true, or_to_if(lisp.cdr(exp)))
@@ -777,6 +790,8 @@ function eval(exp, env, k)
 					   lisp.cadr(lisp.cdr(exp)),
 					   lisp.cadr(lisp.cdr(lisp.cdr(exp))),
 					   env, k)
+	elseif is_cond(exp) then
+		return eval(cond_to_if(exp), env, k)
 	elseif is_begin(exp) then
 		return eval_begin(lisp.cdr(exp), env, k)
 	elseif is_assignment(exp) then
@@ -952,7 +967,7 @@ end
 
 
 function is_last_exp(exp)
-	return cdr(exp) ==lisp.empty_list
+	return cdr(exp) == lisp.empty_list
 end
 
 
