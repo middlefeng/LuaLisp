@@ -53,9 +53,9 @@ function Environment:new(enclosing, params, args)
 
 	local function addProp(nameList, valueList)
 		if nameList ~= nil and nameList ~= lisp.empty_list then
-			local value = car(valueList) or nil_val
-			result.binds[car(nameList)] = value
-			return addProp(cdr(nameList), cdr(valueList))
+			local value = lisp.car(valueList) or nil_val
+			result.binds[lisp.car(nameList)] = value
+			return addProp(lisp.cdr(nameList), lisp.cdr(valueList))
 		end
 	end
 	addProp(params, args)
@@ -717,7 +717,7 @@ end
 
 
 
-function eval_lambda(parms, exp_list, env, k)
+function eval_lambda(params, exp_list, env, k)
 	return k:resume(LispFunction:new(params, exp_list, env))
 end
 
