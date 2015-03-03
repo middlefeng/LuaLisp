@@ -272,6 +272,7 @@ LispPrimitive.primitives =
 	["car"] = LispPrimitive:new(lisp.car, "car"),
 	["cdr"] = LispPrimitive:new(lisp.cdr, "cdr"),
 	["cons"] = LispPrimitive:new(lisp.cons, "cons"),
+	["length"] = LispPrimitive:new(lisp.length, "length"),
 	["print"] = LispPrimitive:new(print_lua, "print"),
 	["list"] = LispPrimitive:new(lisp.list, "list"),
 	["atom?"] = LispPrimitive:new(primitive_atom, "atom?"),
@@ -800,6 +801,8 @@ function eval(exp, env, k)
 		return eval_definition(exp, env, k)
 	elseif is_lambda(exp) then
 		return eval_lambda(lisp.cadr(exp), lisp.cdr(lisp.cdr(exp)), env, k)
+	elseif is_let(exp) then
+		return eval(let_to_lambda_apply(exp), env, k)
 	else
 		return eval_application(lisp.car(exp), lisp.cdr(exp), env, k)
 	end
