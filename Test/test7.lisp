@@ -7,7 +7,8 @@
 
 ;(+ 1 (+ 3 4))
 ;(+ 11 22)
-((lambda (a b) (* c a b)) 14 a)
+(set! c 0.5)
+(print ((lambda (a b) (* c a b)) 14 a))
 
 (define (mult_two a1 b1) (* (* a1 b1) 2))
 (mult_two 33 44)

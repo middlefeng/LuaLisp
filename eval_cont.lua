@@ -131,7 +131,7 @@ end
 
 
 local function primitive_atom(exp)
-	return (not is_pair(exp)) and (exp ~= empty_list)
+	return (not lisp.is_pair(exp)) and (exp ~= lisp.empty_list)
 end
 
 
@@ -195,11 +195,11 @@ end
 
 
 local function primitive_tostring(list)
-	if is_pair(list) then
-		return list_tostring(list)
+	if lisp.is_pair(list) then
+		return lisp.list_tostring(list)
 	end
 
-	return tostring(list)
+	return lisp.tostring(list)
 end
 
 
@@ -262,6 +262,9 @@ LispPrimitive.primitives =
 	["cons"] = LispPrimitive:new(lisp.cons),
 	["print"] = LispPrimitive:new(print_lua),
 	["list"] = LispPrimitive:new(lisp.list),
+	["atom?"] = LispPrimitive:new(primitive_atom),
+	["pair?"] = LispPrimitive:new(lisp.is_pair),
+	["tostring"] = LispPrimitive:new(primitive_tostring),
 	["+"] = LispPrimitive:new(primitive_algebra('+')),
 	["-"] = LispPrimitive:new(primitive_algebra('-')),
 	["*"] = LispPrimitive:new(primitive_algebra('*')),
@@ -327,7 +330,7 @@ function ContinuationIf:new(true_exp, false_exp, env, k)
 	local result = Continuation:new(env, k)
 	result.true_exp = true_exp
 	result.false_exp = false_exp
-	setmetatable(resume, self)
+	setmetatable(result, self)
 	return result
 end
 
@@ -827,7 +830,7 @@ end
 
 
 function eval_set(name, exp, env, k)
-	return eval(exp, ContinuationSet:new(name, env, k))
+	return eval(exp, env, ContinuationSet:new(name, env, k))
 end
 
 
