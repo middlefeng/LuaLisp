@@ -501,7 +501,7 @@ end
 
 
 function text_of_quotation(exp)
-	return cadr(exp)
+	return lisp.cadr(exp)
 end
 
 
@@ -516,7 +516,7 @@ end
 
 
 function assignment_value(exp)
-	return cadr(cdr(exp))
+	return lisp.cadr(cdr(exp))
 end
 
 
@@ -525,7 +525,7 @@ end
 
 
 function make_lambda(params, body)
-	return cons('lambda', cons(params, body))
+	return lisp.cons('lambda', lisp.cons(params, body))
 end
 
 
@@ -554,13 +554,13 @@ end
 
 
 function lambda_param(exp)
-	return cadr(exp)
+	return lisp.cadr(exp)
 end
 
 
 
 function lambda_body(exp)
-	return cdr(cdr(exp))
+	return lisp.cdr(cdr(exp))
 end
 
 
@@ -569,19 +569,19 @@ end
 
 
 function if_predicate(exp)
-	return cadr(exp)
+	return lisp.cadr(exp)
 end
 
 
 
 function if_consequent(exp)
-	return cadr(cdr(exp))
+	return lisp.cadr(cdr(exp))
 end
 
 
 
 function if_alternative(exp)
-	local alt = cadr(cdr(cdr(exp)))
+	local alt = lisp.cadr(lisp.cdr(lisp.cdr(exp)))
 	if alt then
 		return alt
 	else
@@ -591,7 +591,7 @@ end
 
 
 local function make_if(predicate, consequent, alternative)
-	return list('if', predicate, consequent, alternative)
+	return lisp.list('if', predicate, consequent, alternative)
 end
 
 
@@ -599,7 +599,7 @@ end
 
 
 function cond_clauses(exp)
-	return cdr(exp)
+	return lisp.cdr(exp)
 end
 
 
@@ -611,13 +611,13 @@ end
 
 
 function cond_predicate(clause)
-	return car(clause)
+	return lisp.car(clause)
 end
 
 
 
 function cond_action(clause)
-	return cdr(clause)
+	return lisp.cdr(clause)
 end
 
 
@@ -630,16 +630,16 @@ end
 function expand_clauses(clauses)
 	if clauses == empty_list then
 		return 'false'
-	elseif is_cond_else_clause(car(clauses)) then
-		if cdr(clauses) == empty_list then
-			return sequence_to_exp(cond_action(car(clauses)))
+	elseif is_cond_else_clause(lisp.car(clauses)) then
+		if lisp.cdr(clauses) == empty_list then
+			return sequence_to_exp(cond_action(lisp.car(clauses)))
 		else
 			return empty_list
 		end
 	else
-		return make_if(cond_predicate(car(clauses)),
+		return make_if(cond_predicate(lisp.car(clauses)),
 					   sequence_to_exp(cond_action(car(clauses))),
-					   expand_clauses(cdr(clauses)))
+					   expand_clauses(lisp.cdr(clauses)))
 	end
 end
 
@@ -648,25 +648,25 @@ end
 
 
 function and_to_if(exp)
-	if cdr(exp) == empty_list then
-		return car(exp)
+	if lisp.cdr(exp) == empty_list then
+		return lisp.car(exp)
 	else
-		return make_if(car(exp), and_to_if(cdr(exp)), false)
+		return make_if(lisp.car(exp), and_to_if(lisp.cdr(exp)), false)
 	end
 end
 
 
 function or_to_if(exp)
-	if cdr(exp) == empty_list then
-		return car(exp)
+	if lisp.cdr(exp) == empty_list then
+		return lisp.car(exp)
 	else
-		return make_if(car(exp), true, or_to_if(cdr(exp)))
+		return make_if(lisp.car(exp), true, or_to_if(lisp.cdr(exp)))
 	end
 end
 
 
 function not_to_if(exp)
-	return make_if(car(exp), false, true)
+	return make_if(lisp.car(exp), false, true)
 end
 
 
@@ -675,36 +675,36 @@ end
 
 
 function first_exp(sequence)
-	return car(sequence)
+	return lisp.car(sequence)
 end
 
 
 
 function last_exp(sequence)
-	return cdr(sequence) == empty_list
+	return lisp.cdr(sequence) == lisp.empty_list
 end
 
 
 
 function rest_exp(sequence)
-	return cdr(sequence)
+	return lisp.cdr(sequence)
 end
 
 
 
 function begin_actions(exp)
-	return cdr(exp)
+	return lisp.cdr(exp)
 end
 
 
 local function make_begin(sequence)
-	return cons('begin', sequence)
+	return lisp.cons('begin', sequence)
 end
 
 
 function sequence_to_exp(sequence)
-	if sequence == empty_list then
-		return empty_list
+	if sequence == lisp.empty_list then
+		return lisp.empty_list
 	elseif last_exp(sequence) then
 		return first_exp(sequence)
 	else
@@ -719,7 +719,7 @@ end
 function let_to_lambda_apply(exp)
 	local lambda = let_to_lambda(exp)
 	local arguments = let_arguments(exp)
-	return cons(lambda, arguments)
+	return lisp.cons(lambda, arguments)
 end
 
 
@@ -733,17 +733,17 @@ end
 
 
 function let_lambda_parameter(exp)
-	return map(car, cadr(exp))
+	return lisp.map(lisp.car, lisp.cadr(exp))
 end
 
 
 function let_arguments(exp)
-	return map(cadr, cadr(exp))
+	return lisp.map(lisp.cadr, lisp.cadr(exp))
 end
 
 
 function let_lambda_body(exp)
-	return cdr(cdr(exp))
+	return lisp.cdr(lisp.cdr(exp))
 end
 
 
