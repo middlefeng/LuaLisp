@@ -8,6 +8,7 @@ do
 
 	local old_type = type
 	local old_string = string
+	local print_lua = print
 
 	_ENV = {}
 	_ENV.lisp = lisp
@@ -17,6 +18,7 @@ do
 	_ENV.type = old_type
 	_ENV.string = old_string
 	_ENV.select = old_select
+	_ENV.print_lua = print_lua
 
 end
 
@@ -257,6 +259,9 @@ LispPrimitive.primitives =
 {
 	["car"] = LispPrimitive:new(lisp.car),
 	["cdr"] = LispPrimitive:new(lisp.cdr),
+	["cons"] = LispPrimitive:new(lisp.cons),
+	["print"] = LispPrimitive:new(print_lua),
+	["list"] = LispPrimitive:new(lisp.list),
 	["+"] = LispPrimitive:new(primitive_algebra('+')),
 	["-"] = LispPrimitive:new(primitive_algebra('-')),
 	["*"] = LispPrimitive:new(primitive_algebra('*')),
