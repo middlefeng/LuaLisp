@@ -4,7 +4,7 @@ local quote = require "quote"
 local eval = require "eval_cont"
 local lisp = require "lisp"
 
-lisp.set_cons_metatable = false
+lisp.set_cons_metatable = true
 
 local filename = ...
 local file = io.open(filename, "r")
