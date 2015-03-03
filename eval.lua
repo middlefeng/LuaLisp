@@ -121,7 +121,7 @@ function Enviornment:lookup(var)
 	elseif self.enclosing then
 		return self.enclosing:lookup(var)
 	else
-		return nil
+		return error("Unknown Variable [" .. var .. "].")
 	end
 end
 
