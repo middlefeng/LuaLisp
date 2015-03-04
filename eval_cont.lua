@@ -256,6 +256,7 @@ function LispPrimitive:new(primitive, name)
 	local result = {}
 	result.primitive = primitive
 	result.name = name
+	result.__index = result
 	setmetatable(result, self)
 	return result
 end
@@ -265,6 +266,27 @@ function LispPrimitive:invoke(args, env, k)
 	local r = self.primitive(lisp.list_unpack(args))
 	return k:resume(r)
 end
+
+
+
+
+
+LispCallCCPrimitive = LispPrimitive:new()
+
+
+function LispCallCCPrimitive:new()
+	local result = LispPrimitive:new(nil, "call/cc")
+	setmetatable(result, self)
+	return result
+end
+
+
+function LispCallCCPrimitive:invoke(args, env, k)
+	local func = lisp.car(args)
+	return func:invoke(lisp.list(k), env, k)
+end
+
+
 
 
 LispPrimitive.primitives =
@@ -279,6 +301,7 @@ LispPrimitive.primitives =
 	["pair?"] = LispPrimitive:new(lisp.is_pair, "pair?"),
 	["null?"] = LispPrimitive:new(primitive_null, "null?"),
 	["tostring"] = LispPrimitive:new(primitive_tostring, "tostring"),
+	["call/cc"] = LispCallCCPrimitive:new(),
 	["+"] = LispPrimitive:new(primitive_algebra('+'), "+"),
 	["-"] = LispPrimitive:new(primitive_algebra('-'), "-"),
 	["*"] = LispPrimitive:new(primitive_algebra('*'), "*"),
@@ -311,6 +334,11 @@ function Continuation:new(env, k)
 	result.continuation = k
 	setmetatable(result, self)
 	return result
+end
+
+
+function Continuation:invoke(args, env, k)
+	return self:resume(lisp.car(args))
 end
 
 
@@ -422,16 +450,12 @@ end
 
 
 
-ContinuationEvalFunction = {}
-ContinuationEvalFunction.__index = ContinuationEvalFunction
-setmetatable(ContinuationEvalFunction, Continuation)
+ContinuationEvalFunction = Continuation:new()
 
 
 function ContinuationEvalFunction:new(exp_list, env, k)
-	local result = {}
+	local result = Continuation:new(env, k)
 	result.exp_list = exp_list
-	result.env = env
-	result.continuation = k
 	setmetatable(result, self)
 	return result
 end
@@ -444,15 +468,12 @@ end
 
 
 
-ContinuationArguments = {}
-ContinuationArguments.__index = ContinuationArguments
+ContinuationArguments = Continuation:new()
 
 
 function ContinuationArguments:new(exp_list, env, k)
-	local result = {}
+	local result = Continuation:new(env, k)
 	result.exp_list = exp_list
-	result.env = env
-	result.continuation = k
 	setmetatable(result, self)
 	return result
 end
@@ -466,14 +487,12 @@ end
 
 
 
-ContinuationGather = {}
-ContinuationGather.__index = ContinuationGather
+ContinuationGather = Continuation:new()
 
 
 function ContinuationGather:new(exp_list, k)
-	local result = {}
+	local result = Continuation:new(nil, k)
 	result.exp_list = exp_list
-	result.continuation = k
 	setmetatable(result, self)
 	return result
 end
@@ -486,15 +505,12 @@ end
 
 
 
-ContinuationApply = {}
-ContinuationApply.__index = ContinuationApply
+ContinuationApply = Continuation:new()
 
 
 function ContinuationApply:new(func, env, k)
-	local result = {}
+	local result = Continuation:new(env, k)
 	result.func = func
-	result.env = env
-	result.continuation = k
 	setmetatable(result, self)
 	return result
 end
