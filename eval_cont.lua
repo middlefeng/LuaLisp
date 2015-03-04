@@ -296,6 +296,7 @@ LispPrimitive.primitives =
 	["cons"] = LispPrimitive:new(lisp.cons, "cons"),
 	["length"] = LispPrimitive:new(lisp.length, "length"),
 	["print"] = LispPrimitive:new(print_lua, "print"),
+	["display"] = LispPrimitive:new(print_lua, "print"),
 	["list"] = LispPrimitive:new(lisp.list, "list"),
 	["atom?"] = LispPrimitive:new(primitive_atom, "atom?"),
 	["pair?"] = LispPrimitive:new(lisp.is_pair, "pair?"),
