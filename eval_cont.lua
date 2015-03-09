@@ -343,6 +343,11 @@ function Continuation:invoke(args, env, k)
 end
 
 
+function Continuation:catchLookup(tag, throw_k)
+	return self.continuation:catchLookup(tag, throw_k)
+end
+
+
 
 
 ContinuationBottom = Continuation:new()
@@ -359,6 +364,11 @@ end
 function ContinuationBottom:resume(val)
 	self.func(val)
 	return val
+end
+
+
+function ContinuationBottom:catchLookup(tag, throw_k)
+	error("Uncaught exception: " .. lisp.list_tostring(tag))
 end
 
 
@@ -520,6 +530,105 @@ end
 function ContinuationApply:resume(val)
 	return self.func:invoke(val, self.env, self.continuation)
 end
+
+
+
+
+
+
+
+ContinuationCatch = Continuation:new()
+
+
+function ContinuationCatch:new(body, env, k)
+	local result = Continuation:new(env, k)
+	result.body = body
+	setmetatable(result, self)
+	return result
+end
+
+
+function ContinuationCatch:resume(val)
+	return eval_begin(self.body, self.env,
+					  ContinuationLabel:new(val, self.continuation))
+end
+
+
+
+
+
+
+ContinuationLabel = Continuation:new()
+
+
+
+function ContinuationLabel:new(tag, k)
+	local result = Continuation:new(nil, k)
+	result.tag = tag
+	setmetatable(result, self)
+	return result
+end
+
+
+function ContinuationLabel:resume(val)
+	return self.continuation:resume(val)
+end
+
+
+function ContinuationLabel:catchLookup(tag, throw_k)
+	if tag == self.tag then
+		return eval(throw_k.from, throw_k.env,
+					ContinuationThrowing:new(tag, self, throw_k))
+	else
+		return self.continuation:catchLookup(tag, throw_k)
+	end
+end
+
+
+
+
+
+
+ContinuationThrow = Continuation:new()
+
+
+function ContinuationThrow:new(from, env, k)
+	local result = Continuation:new(env, k)
+	result.from = from
+	setmetatable(result, self)
+	return result
+end
+
+
+
+function ContinuationThrow:resume(val)
+	return self:catchLookup(val, self)
+end
+
+
+
+
+
+
+
+ContinuationThrowing = Continuation:new()
+
+
+function ContinuationThrowing:new(tag, label_k, k)
+	local result = Continuation:new(nil, k)
+	result.label_k = label_k
+	result.tag = tag
+	setmetatable(result, self)
+	return result
+end
+
+
+function ContinuationThrowing:resume(val)
+	return self.label_k:resume(val)
+end
+
+
+
 
 
 ------------------------------          Continuation          ------------------------------
@@ -820,6 +929,10 @@ function eval(exp, env, k)
 		return eval_lambda(lisp.cadr(exp), lisp.cdr(lisp.cdr(exp)), env, k)
 	elseif is_let(exp) then
 		return eval(let_to_lambda_apply(exp), env, k)
+	elseif is_catch(exp) then
+		return eval_catch(lisp.cadr(exp), lisp.cdr(lisp.cdr(exp)), env, k)
+	elseif is_throw(exp) then
+		return eval_throw(lisp.cadr(exp), lisp.cadr(lisp.cdr(exp)), env, k)
 	else
 		return eval_application(lisp.car(exp), lisp.cdr(exp), env, k)
 	end
@@ -891,6 +1004,18 @@ end
 function eval_application(func, args, env, k)
 	return eval(func, env, ContinuationEvalFunction:new(args, env, k))
 end
+
+
+
+function eval_catch(tag, body, env, k)
+	return eval(tag, env, ContinuationCatch:new(body, env, k))
+end
+
+
+function eval_throw(tag, from, env, k)
+	return eval(tag, env, ContinuationThrow:new(from, env, k))
+end
+
 
 
 ------------------------------           Evaluator            ------------------------------
@@ -1012,6 +1137,17 @@ end
 function is_let(exp)
 	return is_tagged(exp, 'let')
 end
+
+
+function is_catch(exp)
+	return is_tagged(exp, 'catch')
+end
+
+
+function is_throw(exp)
+	return is_tagged(exp, 'throw')
+end
+
 
 
 ------------------------------    expression predicates       ------------------------------

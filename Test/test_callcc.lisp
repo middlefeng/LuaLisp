@@ -67,10 +67,26 @@
 (define generate-digit
   (generate-one-element-at-a-time '(0 1 2)))
  
-(display (generate-digit)) ;; 0
-(display (generate-digit)) ;; 1
-(display (generate-digit)) ;; 2
-(display (generate-digit)) ;; you-fell-off-the-end
+;(display (generate-digit)) ;; 0
+;(display (generate-digit)) ;; 1
+;(display (generate-digit)) ;; 2
+;(display (generate-digit)) ;; you-fell-off-the-end
+
+
+
+
+
+
+
+;(let ((yin
+;         ((lambda (cc) (display "@") cc) (call/cc (lambda (c) c))))
+;      (yang
+;         ((lambda (cc) (display "*") cc) (call/cc (lambda (c) c)))))
+;    (yin yang))
+
+
+
+
 
 
 
