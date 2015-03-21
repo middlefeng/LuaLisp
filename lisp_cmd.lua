@@ -14,7 +14,7 @@ repeat
 	io.write("> ")
 	cmd = io.read("l")
 
-	if cmd ~= "exit" then
+	if cmd ~= "exit" and cmd ~= "" then
 		local bottom_cont = eval.ContinuationBottom:new(func_noop)
 		local s_exp = quote.quote(cmd)
 		local value = eval.eval_begin(s_exp, env, bottom_cont)

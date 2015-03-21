@@ -166,9 +166,9 @@ end
 
 
 local function primitive_div(...)
-	local result = select('#', ...)
+	local result = select(1, ...)
 	for i = 2, select('#', ...) do
-		result = result + select(i, ...)
+		result = result / select(i, ...)
 	end
 	return result
 end
