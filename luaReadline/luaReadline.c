@@ -11,6 +11,8 @@
 #include "lua.h"
 #include "lauxlib.h"
 
+#include <string.h>
+
 #include <readline/readline.h>
 #include <readline/history.h>
 
@@ -30,7 +32,9 @@ static int lua_readline(lua_State* L)
 {
 	char* cmd;
 	cmd = readline("> ");
-	add_history(cmd);
+	
+	if (cmd && strlen(cmd) > 0)
+		add_history(cmd);
 	
 	lua_pushstring(L, cmd);
 	return 1;
