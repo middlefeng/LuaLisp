@@ -199,9 +199,9 @@ local function primitive_algebra(oper)
 end
 
 
-local function primitive_tostring(list)
+local function primitive_tostring(list, wrap)
 	if lisp.is_pair(list) then
-		return lisp.list_tostring(list)
+		return lisp.list_tostring(list, wrap)
 	end
 
 	return lisp.tostring(list)
