@@ -30,8 +30,10 @@ static const luaL_Reg extension[] =
 
 static int lua_readline(lua_State* L)
 {
+	const char* prompt = lua_tostring(L, -1);
+	
 	char* cmd;
-	cmd = readline("> ");
+	cmd = readline(prompt);
 	
 	if (cmd && strlen(cmd) > 0)
 		add_history(cmd);
