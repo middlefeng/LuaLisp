@@ -30,6 +30,12 @@ local function is_incomplete(str)
 end
 
 
+
+
+print("Lua Scheme 0.1")
+print("Copyright 2015 Dong Feng")
+
+
 local code = ""
 
 repeat

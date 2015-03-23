@@ -2,9 +2,12 @@
 do
 
 	local lisp = require "lisp"
+	local quote = require "quote"
+
 	local old_error = error
 	local old_setmetatable = setmetatable
-	local old_select = select 
+	local old_select = select
+	local old_io = io
 
 	local old_type = type
 	local old_string = string
@@ -12,6 +15,8 @@ do
 
 	_ENV = {}
 	_ENV.lisp = lisp
+	_ENV.quote = quote
+	_ENV.io = old_io
 	_ENV.error = old_error
 	_ENV.eval_exp = eval_exp
 	_ENV.setmetatable = old_setmetatable
@@ -203,6 +208,26 @@ local function primitive_tostring(list)
 end
 
 
+
+local function primitive_open(mode)
+	return function(filename)
+			   return io.open(filename, mode)
+		   end
+end
+
+
+local function primitive_close(port)
+	return io.close(port)
+end
+
+
+
+local function primitive_read_string(inport)
+	return inport:read("a")
+end
+
+
+
 ------------------------------        Primitive Helper        ------------------------------
 --------------------------------------------------------------------------------------------
 
@@ -309,7 +334,11 @@ LispPrimitive.primitives =
 	["/"] = LispPrimitive:new(primitive_algebra('/'), "/"),
 	["eq?"] = LispPrimitive:new(primitive_algebra('=='), "eq?"),
 	["<"] = LispPrimitive:new(primitive_algebra('<'), "<"),
-	[">"] = LispPrimitive:new(primitive_algebra('>'), ">")
+	[">"] = LispPrimitive:new(primitive_algebra('>'), ">"),
+
+	["open-input-file"] = LispPrimitive:new(primitive_open('r'), "open-input-file"),
+	["read-string"] = LispPrimitive:new(primitive_read_string, "read-string"),
+	["close-input-port"] = LispPrimitive:new(primitive_close, "close-input-port")
 }
 
 
