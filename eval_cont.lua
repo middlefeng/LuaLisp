@@ -223,8 +223,21 @@ end
 
 
 local function primitive_read_string(inport)
-	return inport:read("a")
+	local content = inport:read("a")
+	inport:seek("set", 0)
+	return content
 end
+
+
+
+
+local function primitive_read(instream)
+	if type(instream) ~= 'string' then
+		instream = primitive_read_string(instream)
+	end
+	return quote.quote(instream)
+end
+
 
 
 
@@ -314,6 +327,24 @@ end
 
 
 
+LispEvalPrimitive = LispPrimitive:new()
+
+
+function LispEvalPrimitive:new()
+	local result = LispPrimitive:new(nil, "eval")
+	setmetatable(result, self)
+	return result
+end
+
+
+function LispEvalPrimitive:invoke(args, env, k)
+	return eval_begin(lisp.car(args), env, k)
+end
+
+
+
+
+
 LispPrimitive.primitives =
 {
 	["car"] = LispPrimitive:new(lisp.car, "car"),
@@ -338,7 +369,9 @@ LispPrimitive.primitives =
 
 	["open-input-file"] = LispPrimitive:new(primitive_open('r'), "open-input-file"),
 	["read-string"] = LispPrimitive:new(primitive_read_string, "read-string"),
-	["close-input-port"] = LispPrimitive:new(primitive_close, "close-input-port")
+	["read"] = LispPrimitive:new(primitive_read, "read"),
+	["close-input-port"] = LispPrimitive:new(primitive_close, "close-input-port"),
+	["eval"] = LispEvalPrimitive:new()
 }
 
 
