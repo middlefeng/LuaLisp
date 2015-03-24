@@ -140,6 +140,25 @@ local function primitive_atom(exp)
 end
 
 
+local function primitive_and(...)
+	local result = true
+	for i = 1, select('#', ...) do
+		result = result and select(i, ...)
+	end
+	return result
+end
+
+
+local function primitive_or(...)
+	local result = false
+	for i = 1, select('#', ...) do
+		result = result or select(i, ...)
+	end
+	return result
+end
+
+
+
 local function primitive_add(...)
 	local result = 0
 	for i = 1, select('#', ...) do
@@ -366,6 +385,9 @@ LispPrimitive.primitives =
 	["eq?"] = LispPrimitive:new(primitive_algebra('=='), "eq?"),
 	["<"] = LispPrimitive:new(primitive_algebra('<'), "<"),
 	[">"] = LispPrimitive:new(primitive_algebra('>'), ">"),
+
+	["and"] = LispPrimitive:new(primitive_and, "and"),
+	["or"] = LispPrimitive:new(primitive_or, "or"),
 
 	["open-input-file"] = LispPrimitive:new(primitive_open('r'), "open-input-file"),
 	["read-string"] = LispPrimitive:new(primitive_read_string, "read-string"),
