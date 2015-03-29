@@ -4,7 +4,7 @@
 <dict>
 	<key>SchemeUserState</key>
 	<dict>
-		<key>luaReadline.xcscheme</key>
+		<key>benchmark.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
 			<integer>0</integer>
@@ -12,7 +12,7 @@
 	</dict>
 	<key>SuppressBuildableAutocreation</key>
 	<dict>
-		<key>2C794D311ABD470F009B38E6</key>
+		<key>2C4DC8FE1AC28D1200DB8D8F</key>
 		<dict>
 			<key>primary</key>
 			<true/>

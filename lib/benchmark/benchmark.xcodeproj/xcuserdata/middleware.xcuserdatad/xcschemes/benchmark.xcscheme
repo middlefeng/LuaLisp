@@ -14,10 +14,10 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "2C794D311ABD470F009B38E6"
-               BuildableName = "libluaReadline.dylib"
-               BlueprintName = "luaReadline"
-               ReferencedContainer = "container:luaReadline.xcodeproj">
+               BlueprintIdentifier = "2C4DC8FE1AC28D1200DB8D8F"
+               BuildableName = "libbenchmark.dylib"
+               BlueprintName = "benchmark"
+               ReferencedContainer = "container:benchmark.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -35,17 +35,17 @@
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
       launchStyle = "0"
       useCustomWorkingDirectory = "NO"
-      buildConfiguration = "Debug"
+      buildConfiguration = "Release"
       ignoresPersistentStateOnLaunch = "NO"
       debugDocumentVersioning = "YES"
       allowLocationSimulation = "YES">
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "2C794D311ABD470F009B38E6"
-            BuildableName = "libluaReadline.dylib"
-            BlueprintName = "luaReadline"
-            ReferencedContainer = "container:luaReadline.xcodeproj">
+            BlueprintIdentifier = "2C4DC8FE1AC28D1200DB8D8F"
+            BuildableName = "libbenchmark.dylib"
+            BlueprintName = "benchmark"
+            ReferencedContainer = "container:benchmark.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
       <AdditionalOptions>
@@ -60,10 +60,10 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "2C794D311ABD470F009B38E6"
-            BuildableName = "libluaReadline.dylib"
-            BlueprintName = "luaReadline"
-            ReferencedContainer = "container:luaReadline.xcodeproj">
+            BlueprintIdentifier = "2C4DC8FE1AC28D1200DB8D8F"
+            BuildableName = "libbenchmark.dylib"
+            BlueprintName = "benchmark"
+            ReferencedContainer = "container:benchmark.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
    </ProfileAction>
