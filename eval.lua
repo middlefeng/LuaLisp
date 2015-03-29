@@ -180,7 +180,7 @@ function Enviornment:eval(exp)
 	elseif is_let(exp) then
 		return self:eval(let_to_lambda_apply(exp))
 	elseif is_begin(exp) then
-		return self:evalSequence(exp)
+		return self:evalSequence(cdr(exp))
 	elseif is_cond(exp) then
 		return self:eval(cond_to_if(exp))
 	elseif is_force(exp) then
