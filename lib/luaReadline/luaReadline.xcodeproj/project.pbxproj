@@ -7,51 +7,44 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		2C101F041ABD4866009C35EF /* libluad.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2C794D4E1ABD4824009B38E6 /* libluad.dylib */; };
+		2C0D6F561AC8AF5E009E1417 /* libluad.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2C0D6F551AC8AF2A009E1417 /* libluad.dylib */; };
 		2C101F071ABD4942009C35EF /* libreadline.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2C101F061ABD4942009C35EF /* libreadline.dylib */; };
 		2C794D3B1ABD476C009B38E6 /* luaReadline.c in Sources */ = {isa = PBXBuildFile; fileRef = 2C794D391ABD476C009B38E6 /* luaReadline.c */; };
 		2C794D3C1ABD476C009B38E6 /* luaReadline.h in Headers */ = {isa = PBXBuildFile; fileRef = 2C794D3A1ABD476C009B38E6 /* luaReadline.h */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		2C101F021ABD4857009C35EF /* PBXContainerItemProxy */ = {
+		2C0D6F4C1AC8AF2A009E1417 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 2C794D3D1ABD4824009B38E6 /* lua.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 2C57C8DF163F909000C9AA4A;
-			remoteInfo = libluad;
-		};
-		2C794D451ABD4824009B38E6 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 2C794D3D1ABD4824009B38E6 /* lua.xcodeproj */;
+			containerPortal = 2C0D6F441AC8AF29009E1417 /* lua.xcodeproj */;
 			proxyType = 2;
 			remoteGlobalIDString = 2C3170E3157CE98000F12776;
 			remoteInfo = lua;
 		};
-		2C794D471ABD4824009B38E6 /* PBXContainerItemProxy */ = {
+		2C0D6F4E1AC8AF2A009E1417 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 2C794D3D1ABD4824009B38E6 /* lua.xcodeproj */;
+			containerPortal = 2C0D6F441AC8AF29009E1417 /* lua.xcodeproj */;
 			proxyType = 2;
 			remoteGlobalIDString = 2C57C91B163F923C00C9AA4A;
 			remoteInfo = luad;
 		};
-		2C794D491ABD4824009B38E6 /* PBXContainerItemProxy */ = {
+		2C0D6F501AC8AF2A009E1417 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 2C794D3D1ABD4824009B38E6 /* lua.xcodeproj */;
+			containerPortal = 2C0D6F441AC8AF29009E1417 /* lua.xcodeproj */;
 			proxyType = 2;
 			remoteGlobalIDString = 2C317193157CEEE000F12776;
 			remoteInfo = luac;
 		};
-		2C794D4B1ABD4824009B38E6 /* PBXContainerItemProxy */ = {
+		2C0D6F521AC8AF2A009E1417 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 2C794D3D1ABD4824009B38E6 /* lua.xcodeproj */;
+			containerPortal = 2C0D6F441AC8AF29009E1417 /* lua.xcodeproj */;
 			proxyType = 2;
 			remoteGlobalIDString = 2C317152157CECFD00F12776;
 			remoteInfo = liblua;
 		};
-		2C794D4D1ABD4824009B38E6 /* PBXContainerItemProxy */ = {
+		2C0D6F541AC8AF2A009E1417 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 2C794D3D1ABD4824009B38E6 /* lua.xcodeproj */;
+			containerPortal = 2C0D6F441AC8AF29009E1417 /* lua.xcodeproj */;
 			proxyType = 2;
 			remoteGlobalIDString = 2C57C8E0163F909000C9AA4A;
 			remoteInfo = libluad;
@@ -59,12 +52,11 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		2C0D6F441AC8AF29009E1417 /* lua.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = lua.xcodeproj; path = ../lua/project/lua.xcodeproj; sourceTree = "<group>"; };
 		2C101F061ABD4942009C35EF /* libreadline.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libreadline.dylib; path = usr/lib/libreadline.dylib; sourceTree = SDKROOT; };
-		2C101F2F1AC0A4EB009C35EF /* eval_cont.lua */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = eval_cont.lua; path = ../eval_cont.lua; sourceTree = "<group>"; };
 		2C794D321ABD470F009B38E6 /* libluaReadline.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libluaReadline.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		2C794D391ABD476C009B38E6 /* luaReadline.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = luaReadline.c; sourceTree = "<group>"; };
 		2C794D3A1ABD476C009B38E6 /* luaReadline.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = luaReadline.h; sourceTree = "<group>"; };
-		2C794D3D1ABD4824009B38E6 /* lua.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = lua.xcodeproj; path = "../../lua-versioned/project/lua.xcodeproj"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -72,20 +64,31 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2C0D6F561AC8AF5E009E1417 /* libluad.dylib in Frameworks */,
 				2C101F071ABD4942009C35EF /* libreadline.dylib in Frameworks */,
-				2C101F041ABD4866009C35EF /* libluad.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		2C0D6F451AC8AF29009E1417 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				2C0D6F4D1AC8AF2A009E1417 /* lua */,
+				2C0D6F4F1AC8AF2A009E1417 /* luad */,
+				2C0D6F511AC8AF2A009E1417 /* luac */,
+				2C0D6F531AC8AF2A009E1417 /* liblua.a */,
+				2C0D6F551AC8AF2A009E1417 /* libluad.dylib */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		2C794D291ABD470F009B38E6 = {
 			isa = PBXGroup;
 			children = (
-				2C101F2F1AC0A4EB009C35EF /* eval_cont.lua */,
+				2C0D6F441AC8AF29009E1417 /* lua.xcodeproj */,
 				2C101F061ABD4942009C35EF /* libreadline.dylib */,
-				2C794D3D1ABD4824009B38E6 /* lua.xcodeproj */,
 				2C794D391ABD476C009B38E6 /* luaReadline.c */,
 				2C794D3A1ABD476C009B38E6 /* luaReadline.h */,
 				2C794D331ABD470F009B38E6 /* Products */,
@@ -96,18 +99,6 @@
 			isa = PBXGroup;
 			children = (
 				2C794D321ABD470F009B38E6 /* libluaReadline.dylib */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
-		2C794D3E1ABD4824009B38E6 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				2C794D461ABD4824009B38E6 /* lua */,
-				2C794D481ABD4824009B38E6 /* luad */,
-				2C794D4A1ABD4824009B38E6 /* luac */,
-				2C794D4C1ABD4824009B38E6 /* liblua.a */,
-				2C794D4E1ABD4824009B38E6 /* libluad.dylib */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -137,7 +128,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				2C101F031ABD4857009C35EF /* PBXTargetDependency */,
 			);
 			name = luaReadline;
 			productName = luaReadline;
@@ -170,8 +160,8 @@
 			projectDirPath = "";
 			projectReferences = (
 				{
-					ProductGroup = 2C794D3E1ABD4824009B38E6 /* Products */;
-					ProjectRef = 2C794D3D1ABD4824009B38E6 /* lua.xcodeproj */;
+					ProductGroup = 2C0D6F451AC8AF29009E1417 /* Products */;
+					ProjectRef = 2C0D6F441AC8AF29009E1417 /* lua.xcodeproj */;
 				},
 			);
 			projectRoot = "";
@@ -182,39 +172,39 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
-		2C794D461ABD4824009B38E6 /* lua */ = {
+		2C0D6F4D1AC8AF2A009E1417 /* lua */ = {
 			isa = PBXReferenceProxy;
 			fileType = "compiled.mach-o.executable";
 			path = lua;
-			remoteRef = 2C794D451ABD4824009B38E6 /* PBXContainerItemProxy */;
+			remoteRef = 2C0D6F4C1AC8AF2A009E1417 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		2C794D481ABD4824009B38E6 /* luad */ = {
+		2C0D6F4F1AC8AF2A009E1417 /* luad */ = {
 			isa = PBXReferenceProxy;
 			fileType = "compiled.mach-o.executable";
 			path = luad;
-			remoteRef = 2C794D471ABD4824009B38E6 /* PBXContainerItemProxy */;
+			remoteRef = 2C0D6F4E1AC8AF2A009E1417 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		2C794D4A1ABD4824009B38E6 /* luac */ = {
+		2C0D6F511AC8AF2A009E1417 /* luac */ = {
 			isa = PBXReferenceProxy;
 			fileType = "compiled.mach-o.executable";
 			path = luac;
-			remoteRef = 2C794D491ABD4824009B38E6 /* PBXContainerItemProxy */;
+			remoteRef = 2C0D6F501AC8AF2A009E1417 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		2C794D4C1ABD4824009B38E6 /* liblua.a */ = {
+		2C0D6F531AC8AF2A009E1417 /* liblua.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
 			path = liblua.a;
-			remoteRef = 2C794D4B1ABD4824009B38E6 /* PBXContainerItemProxy */;
+			remoteRef = 2C0D6F521AC8AF2A009E1417 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		2C794D4E1ABD4824009B38E6 /* libluad.dylib */ = {
+		2C0D6F551AC8AF2A009E1417 /* libluad.dylib */ = {
 			isa = PBXReferenceProxy;
 			fileType = "compiled.mach-o.dylib";
 			path = libluad.dylib;
-			remoteRef = 2C794D4D1ABD4824009B38E6 /* PBXContainerItemProxy */;
+			remoteRef = 2C0D6F541AC8AF2A009E1417 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXReferenceProxy section */
@@ -229,14 +219,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
-
-/* Begin PBXTargetDependency section */
-		2C101F031ABD4857009C35EF /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = libluad;
-			targetProxy = 2C101F021ABD4857009C35EF /* PBXContainerItemProxy */;
-		};
-/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		2C794D341ABD470F009B38E6 /* Debug */ = {
@@ -320,7 +302,7 @@
 				DYLIB_CURRENT_VERSION = 1;
 				EXECUTABLE_PREFIX = lib;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				USER_HEADER_SEARCH_PATHS = "/Users/middleware/UserData/SourceCode/lua-versioned/src";
+				USER_HEADER_SEARCH_PATHS = "\"$(SRCROOT)/../lua/src\"";
 			};
 			name = Debug;
 		};
@@ -331,7 +313,7 @@
 				DYLIB_CURRENT_VERSION = 1;
 				EXECUTABLE_PREFIX = lib;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				USER_HEADER_SEARCH_PATHS = "/Users/middleware/UserData/SourceCode/lua-versioned/src";
+				USER_HEADER_SEARCH_PATHS = "\"$(SRCROOT)/../lua/src\"";
 			};
 			name = Release;
 		};

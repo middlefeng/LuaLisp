@@ -7,59 +7,52 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		2C0D6F421AC8AEF6009E1417 /* libluad.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2C0D6F411AC8AE90009E1417 /* libluad.dylib */; };
 		2C4DC91C1AC28D9500DB8D8F /* benchmark.c in Sources */ = {isa = PBXBuildFile; fileRef = 2C4DC91A1AC28D9500DB8D8F /* benchmark.c */; };
 		2C4DC91D1AC28D9500DB8D8F /* benchmark.h in Headers */ = {isa = PBXBuildFile; fileRef = 2C4DC91B1AC28D9500DB8D8F /* benchmark.h */; };
-		2C4DC91F1AC28F5700DB8D8F /* libluad.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2C4DC9171AC28D3A00DB8D8F /* libluad.dylib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		2C4DC90E1AC28D3A00DB8D8F /* PBXContainerItemProxy */ = {
+		2C0D6F381AC8AE90009E1417 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 2C4DC9061AC28D3A00DB8D8F /* lua.xcodeproj */;
+			containerPortal = 2C0D6F301AC8AE90009E1417 /* lua.xcodeproj */;
 			proxyType = 2;
 			remoteGlobalIDString = 2C3170E3157CE98000F12776;
 			remoteInfo = lua;
 		};
-		2C4DC9101AC28D3A00DB8D8F /* PBXContainerItemProxy */ = {
+		2C0D6F3A1AC8AE90009E1417 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 2C4DC9061AC28D3A00DB8D8F /* lua.xcodeproj */;
+			containerPortal = 2C0D6F301AC8AE90009E1417 /* lua.xcodeproj */;
 			proxyType = 2;
 			remoteGlobalIDString = 2C57C91B163F923C00C9AA4A;
 			remoteInfo = luad;
 		};
-		2C4DC9121AC28D3A00DB8D8F /* PBXContainerItemProxy */ = {
+		2C0D6F3C1AC8AE90009E1417 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 2C4DC9061AC28D3A00DB8D8F /* lua.xcodeproj */;
+			containerPortal = 2C0D6F301AC8AE90009E1417 /* lua.xcodeproj */;
 			proxyType = 2;
 			remoteGlobalIDString = 2C317193157CEEE000F12776;
 			remoteInfo = luac;
 		};
-		2C4DC9141AC28D3A00DB8D8F /* PBXContainerItemProxy */ = {
+		2C0D6F3E1AC8AE90009E1417 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 2C4DC9061AC28D3A00DB8D8F /* lua.xcodeproj */;
+			containerPortal = 2C0D6F301AC8AE90009E1417 /* lua.xcodeproj */;
 			proxyType = 2;
 			remoteGlobalIDString = 2C317152157CECFD00F12776;
 			remoteInfo = liblua;
 		};
-		2C4DC9161AC28D3A00DB8D8F /* PBXContainerItemProxy */ = {
+		2C0D6F401AC8AE90009E1417 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 2C4DC9061AC28D3A00DB8D8F /* lua.xcodeproj */;
+			containerPortal = 2C0D6F301AC8AE90009E1417 /* lua.xcodeproj */;
 			proxyType = 2;
 			remoteGlobalIDString = 2C57C8E0163F909000C9AA4A;
-			remoteInfo = libluad;
-		};
-		2C4DC9181AC28D4700DB8D8F /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 2C4DC9061AC28D3A00DB8D8F /* lua.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 2C57C8DF163F909000C9AA4A;
 			remoteInfo = libluad;
 		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		2C0D6F301AC8AE90009E1417 /* lua.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = lua.xcodeproj; path = ../lua/project/lua.xcodeproj; sourceTree = "<group>"; };
 		2C4DC8FF1AC28D1200DB8D8F /* libbenchmark.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libbenchmark.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
-		2C4DC9061AC28D3A00DB8D8F /* lua.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = lua.xcodeproj; path = "../../../lua-versioned/project/lua.xcodeproj"; sourceTree = "<group>"; };
 		2C4DC91A1AC28D9500DB8D8F /* benchmark.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = benchmark.c; sourceTree = "<group>"; };
 		2C4DC91B1AC28D9500DB8D8F /* benchmark.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = benchmark.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -69,19 +62,31 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				2C4DC91F1AC28F5700DB8D8F /* libluad.dylib in Frameworks */,
+				2C0D6F421AC8AEF6009E1417 /* libluad.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		2C0D6F311AC8AE90009E1417 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				2C0D6F391AC8AE90009E1417 /* lua */,
+				2C0D6F3B1AC8AE90009E1417 /* luad */,
+				2C0D6F3D1AC8AE90009E1417 /* luac */,
+				2C0D6F3F1AC8AE90009E1417 /* liblua.a */,
+				2C0D6F411AC8AE90009E1417 /* libluad.dylib */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		2C4DC8F61AC28D1100DB8D8F = {
 			isa = PBXGroup;
 			children = (
+				2C0D6F301AC8AE90009E1417 /* lua.xcodeproj */,
 				2C4DC91A1AC28D9500DB8D8F /* benchmark.c */,
 				2C4DC91B1AC28D9500DB8D8F /* benchmark.h */,
-				2C4DC9061AC28D3A00DB8D8F /* lua.xcodeproj */,
 				2C4DC9001AC28D1200DB8D8F /* Products */,
 			);
 			sourceTree = "<group>";
@@ -90,18 +95,6 @@
 			isa = PBXGroup;
 			children = (
 				2C4DC8FF1AC28D1200DB8D8F /* libbenchmark.dylib */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
-		2C4DC9071AC28D3A00DB8D8F /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				2C4DC90F1AC28D3A00DB8D8F /* lua */,
-				2C4DC9111AC28D3A00DB8D8F /* luad */,
-				2C4DC9131AC28D3A00DB8D8F /* luac */,
-				2C4DC9151AC28D3A00DB8D8F /* liblua.a */,
-				2C4DC9171AC28D3A00DB8D8F /* libluad.dylib */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -131,7 +124,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				2C4DC9191AC28D4700DB8D8F /* PBXTargetDependency */,
 			);
 			name = benchmark;
 			productName = benchmark;
@@ -164,8 +156,8 @@
 			projectDirPath = "";
 			projectReferences = (
 				{
-					ProductGroup = 2C4DC9071AC28D3A00DB8D8F /* Products */;
-					ProjectRef = 2C4DC9061AC28D3A00DB8D8F /* lua.xcodeproj */;
+					ProductGroup = 2C0D6F311AC8AE90009E1417 /* Products */;
+					ProjectRef = 2C0D6F301AC8AE90009E1417 /* lua.xcodeproj */;
 				},
 			);
 			projectRoot = "";
@@ -176,39 +168,39 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
-		2C4DC90F1AC28D3A00DB8D8F /* lua */ = {
+		2C0D6F391AC8AE90009E1417 /* lua */ = {
 			isa = PBXReferenceProxy;
 			fileType = "compiled.mach-o.executable";
 			path = lua;
-			remoteRef = 2C4DC90E1AC28D3A00DB8D8F /* PBXContainerItemProxy */;
+			remoteRef = 2C0D6F381AC8AE90009E1417 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		2C4DC9111AC28D3A00DB8D8F /* luad */ = {
+		2C0D6F3B1AC8AE90009E1417 /* luad */ = {
 			isa = PBXReferenceProxy;
 			fileType = "compiled.mach-o.executable";
 			path = luad;
-			remoteRef = 2C4DC9101AC28D3A00DB8D8F /* PBXContainerItemProxy */;
+			remoteRef = 2C0D6F3A1AC8AE90009E1417 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		2C4DC9131AC28D3A00DB8D8F /* luac */ = {
+		2C0D6F3D1AC8AE90009E1417 /* luac */ = {
 			isa = PBXReferenceProxy;
 			fileType = "compiled.mach-o.executable";
 			path = luac;
-			remoteRef = 2C4DC9121AC28D3A00DB8D8F /* PBXContainerItemProxy */;
+			remoteRef = 2C0D6F3C1AC8AE90009E1417 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		2C4DC9151AC28D3A00DB8D8F /* liblua.a */ = {
+		2C0D6F3F1AC8AE90009E1417 /* liblua.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
 			path = liblua.a;
-			remoteRef = 2C4DC9141AC28D3A00DB8D8F /* PBXContainerItemProxy */;
+			remoteRef = 2C0D6F3E1AC8AE90009E1417 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		2C4DC9171AC28D3A00DB8D8F /* libluad.dylib */ = {
+		2C0D6F411AC8AE90009E1417 /* libluad.dylib */ = {
 			isa = PBXReferenceProxy;
 			fileType = "compiled.mach-o.dylib";
 			path = libluad.dylib;
-			remoteRef = 2C4DC9161AC28D3A00DB8D8F /* PBXContainerItemProxy */;
+			remoteRef = 2C0D6F401AC8AE90009E1417 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXReferenceProxy section */
@@ -223,14 +215,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
-
-/* Begin PBXTargetDependency section */
-		2C4DC9191AC28D4700DB8D8F /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = libluad;
-			targetProxy = 2C4DC9181AC28D4700DB8D8F /* PBXContainerItemProxy */;
-		};
-/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		2C4DC9011AC28D1200DB8D8F /* Debug */ = {
@@ -314,7 +298,7 @@
 				DYLIB_CURRENT_VERSION = 1;
 				EXECUTABLE_PREFIX = lib;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				USER_HEADER_SEARCH_PATHS = "\"$(SRCROOT)/../../../lua-versioned/src\"";
+				USER_HEADER_SEARCH_PATHS = "\"$(SRCROOT)/../lua/src\"";
 			};
 			name = Debug;
 		};
@@ -325,7 +309,7 @@
 				DYLIB_CURRENT_VERSION = 1;
 				EXECUTABLE_PREFIX = lib;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				USER_HEADER_SEARCH_PATHS = "\"$(SRCROOT)/../../../lua-versioned/src\"";
+				USER_HEADER_SEARCH_PATHS = "\"$(SRCROOT)/../lua/src\"";
 			};
 			name = Release;
 		};
@@ -348,6 +332,7 @@
 				2C4DC9051AC28D1200DB8D8F /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
