@@ -67,9 +67,12 @@ print("Triangle: " .. triangle .. " takes " .. time)
 
 local quote = require "quote"
 local eval = require "eval_cont"
+local eval_reg = require "eval"
 local lisp = require "lisp"
 
 local file = io.open("Test/benchmark.lisp", "r")
+local arg = select(1, ...)
+local regular_eval = (arg == 'no-callcc')
 
 if not(file) or io.type(file) ~= "file" then
 	print("File not found: " .. filename)
@@ -84,13 +87,19 @@ print(lisp.list_tostring(s_exp, true) .. "\n")
 
 local env = eval.Environment.initEnv()
 local bottom_cont = eval.ContinuationBottom:new(print)
---local env = eval.Enviornment.initEnviornment()
+local env_regular = eval_reg.Enviornment.initEnviornment()
 
 benchmark.begin_run()
 
 env:define("iterate_num", iterate_num, bottom_cont)
-local value = eval.eval_begin(s_exp, env, bottom_cont)
---local value = env:evalSequence(s_exp)
+env_regular:defineVar("iterate_num", iterate_num)
+
+local value
+if not regular_eval then
+    value = eval.eval_begin(s_exp, env, bottom_cont)
+else
+    value = env_regular:evalSequence(s_exp)
+end
 
 time = benchmark.end_run()
 
