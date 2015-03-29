@@ -18,6 +18,7 @@ do
 	local old_type = _ENV.type
 	local old_string = _ENV.string
 	local old_tostring = _ENV.tostring
+	local old_math = math
 	
 	local old_print = _ENV.print
 	local old_pairs = _ENV.pairs
@@ -44,6 +45,7 @@ do
 	_ENV.type = old_type
 	_ENV.string = old_string
 	_ENV.tostring = old_tostring
+	_ENV.math = old_math
 	
 	_ENV.print = old_print
 	_ENV.pairs = old_pairs
@@ -365,6 +367,25 @@ end
 
 
 
+local function primitive_and(...)
+	local result = true
+	for i = 1, select('#', ...) do
+		result = result and select(i, ...)
+	end
+	return result
+end
+
+
+local function primitive_or(...)
+	local result = false
+	for i = 1, select('#', ...) do
+		result = result or select(i, ...)
+	end
+	return result
+end
+
+
+
 function Procedure:new(params, body, env, type, primitivename)
 	local result = {
 		params = params,
@@ -397,6 +418,13 @@ Procedure.primitiveProcedures = {
 	["="] = Procedure:new(nil, primitive_algebra('=='), nil, 'primitive', '='),
 	["print"] = Procedure:new(nil, print, nil, 'primitive', 'print'),
 	["tostring"] = Procedure:new(nil, primitive_tostring, nil, 'primitive', 'tostring'),
+
+	["and"] = Procedure:new(nil, primitive_and, nil, "primitive", "and"),
+	["or"] = Procedure:new(nil, primitive_or, nil, "primitive", "or"),
+
+	["sqrt"] = Procedure:new(nil, math.sqrt, nil, "sqrt", "or"),
+	["mod"] = Procedure:new(nil, math.fmod, nil, "mod", "or"),
+	["floor"] = Procedure:new(nil, math.floor, nil, "mod", "floor")
 }
 setmetatable(Procedure.primitiveProcedures, Frame)
 
