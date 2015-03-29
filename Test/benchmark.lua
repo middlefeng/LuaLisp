@@ -26,7 +26,7 @@ int main ()
 ]]--
 
 
-package.cpath = package.cpath .. ";./lib?.dylib"
+package.cpath = package.cpath .. ";./lib/target/lib?.dylib"
 local benchmark = require "benchmark"
 
 
@@ -50,8 +50,9 @@ benchmark.begin_run();
 
 local triangle = 1
 local index = 1
+local iterate_num = 50
 
-while factorCount(triangle) < 100 do
+while factorCount(triangle) < iterate_num do
 	index = index + 1
 	triangle = triangle + index
 end
@@ -87,6 +88,7 @@ local bottom_cont = eval.ContinuationBottom:new(print)
 
 benchmark.begin_run()
 
+env:define("iterate_num", iterate_num, bottom_cont)
 local value = eval.eval_begin(s_exp, env, bottom_cont)
 --local value = env:evalSequence(s_exp)
 

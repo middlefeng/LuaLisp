@@ -46,7 +46,7 @@
 
 
 (define (do_main index triangle)
-		(if (< (factor_count triangle) 5)
+		(if (< (factor_count triangle) iterate_num)
 			(do_main (+ 1 index) (+ 1 index triangle))
 			triangle) )
 
