@@ -2,6 +2,9 @@
 <Workspace
    version = "1.0">
    <FileRef
+      location = "group:lua_c_lisp/lua_c_lisp.xcodeproj">
+   </FileRef>
+   <FileRef
       location = "group:luaReadline/luaReadline.xcodeproj">
    </FileRef>
    <FileRef
