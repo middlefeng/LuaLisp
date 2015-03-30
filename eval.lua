@@ -180,7 +180,7 @@ function Enviornment:eval(exp)
 	elseif is_let(exp) then
 		return self:eval(let_to_lambda_apply(exp))
 	elseif is_begin(exp) then
-		return self:evalSequence(exp)
+		return self:evalSequence(cdr(exp))
 	elseif is_cond(exp) then
 		return self:eval(cond_to_if(exp))
 	elseif is_force(exp) then
@@ -422,9 +422,9 @@ Procedure.primitiveProcedures = {
 	["and"] = Procedure:new(nil, primitive_and, nil, "primitive", "and"),
 	["or"] = Procedure:new(nil, primitive_or, nil, "primitive", "or"),
 
-	["sqrt"] = Procedure:new(nil, math.sqrt, nil, "sqrt", "or"),
-	["mod"] = Procedure:new(nil, math.fmod, nil, "mod", "or"),
-	["floor"] = Procedure:new(nil, math.floor, nil, "mod", "floor")
+	["sqrt"] = Procedure:new(nil, math.sqrt, nil, "primitive", "sqrt"),
+	["mod"] = Procedure:new(nil, math.fmod, nil, "primitive", "mod"),
+	["floor"] = Procedure:new(nil, math.floor, nil, "primitive", "floor")
 }
 setmetatable(Procedure.primitiveProcedures, Frame)
 
