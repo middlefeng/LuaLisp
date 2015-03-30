@@ -4,7 +4,7 @@ local quote = require "quote"
 local eval = require "eval_cont"
 local lisp = require "lisp"
 
-package.cpath = package.cpath .. ";./lib?.dylib"
+package.cpath = package.cpath .. ";./lib/target/lib?.dylib"
 local readline = require "luaReadline"
 
 lisp.set_cons_metatable = true

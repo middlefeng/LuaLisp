@@ -8,6 +8,7 @@ do
 	local old_setmetatable = setmetatable
 	local old_select = select
 	local old_io = io
+	local old_math = math
 
 	local old_type = type
 	local old_string = string
@@ -17,6 +18,7 @@ do
 	_ENV.lisp = lisp
 	_ENV.quote = quote
 	_ENV.io = old_io
+	_ENV.math = old_math
 	_ENV.error = old_error
 	_ENV.eval_exp = eval_exp
 	_ENV.setmetatable = old_setmetatable
@@ -388,6 +390,10 @@ LispPrimitive.primitives =
 
 	["and"] = LispPrimitive:new(primitive_and, "and"),
 	["or"] = LispPrimitive:new(primitive_or, "or"),
+
+	["sqrt"] = LispPrimitive:new(math.sqrt, "sqrt"),
+	["mod"] = LispPrimitive:new(math.fmod, "mod"),
+	["floor"] = LispPrimitive:new(math.floor, "floor"),
 
 	["open-input-file"] = LispPrimitive:new(primitive_open('r'), "open-input-file"),
 	["read-string"] = LispPrimitive:new(primitive_read_string, "read-string"),
