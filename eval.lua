@@ -422,9 +422,9 @@ Procedure.primitiveProcedures = {
 	["and"] = Procedure:new(nil, primitive_and, nil, "primitive", "and"),
 	["or"] = Procedure:new(nil, primitive_or, nil, "primitive", "or"),
 
-	["sqrt"] = Procedure:new(nil, math.sqrt, nil, "sqrt", "or"),
-	["mod"] = Procedure:new(nil, math.fmod, nil, "mod", "or"),
-	["floor"] = Procedure:new(nil, math.floor, nil, "mod", "floor")
+	["sqrt"] = Procedure:new(nil, math.sqrt, nil, "primitive", "sqrt"),
+	["mod"] = Procedure:new(nil, math.fmod, nil, "primitive", "mod"),
+	["floor"] = Procedure:new(nil, math.floor, nil, "primitive", "floor")
 }
 setmetatable(Procedure.primitiveProcedures, Frame)
 
