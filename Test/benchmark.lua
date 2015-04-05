@@ -133,6 +133,8 @@ end
 local lisp_src = file:read("a")
 local s_exp = quote.quote(lisp_src)
 
+benchmark.install_hook()
+
 -- print("Source: ")
 -- print(lisp.list_tostring(s_exp, true) .. "\n")
 
