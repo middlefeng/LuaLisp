@@ -1126,7 +1126,7 @@ end
 
 
 function is_variable(exp)
-	return (type(exp) == 'string' and (not is_self_evaluating(exp)))
+	return type(exp) == 'string'
 end
 
 

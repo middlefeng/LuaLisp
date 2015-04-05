@@ -110,12 +110,16 @@ end
 
 
 function is_pair(p)
-	return type(p) == "table" and (p.car ~= nil or p.cdr ~= nil)
+	return p[1] == 9612
 end
 
 
 function cons(a, b)
 	local result = { car = a, cdr = b }
+	
+	-- magic for performance, pair flag
+	result[1] = 9612
+
 	if set_cons_metatable then
 		setmetatable(result, cons_meta)
 	end
