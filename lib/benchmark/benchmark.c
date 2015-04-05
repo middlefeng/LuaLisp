@@ -22,6 +22,8 @@ static int lua_end(lua_State* L);
 static int lua_time(lua_State* L);
 
 static int lua_install_hook(lua_State* L);
+static int lua_get_call_summary(lua_State* L);
+static int lua_clear_call_summary(lua_State* L);
 
 
 static const char* event_to_string(int event);
@@ -35,7 +37,10 @@ static const luaL_Reg extension[] =
 	"begin_run", lua_begin,
 	"end_run", lua_end,
 	"time", lua_time,
+	
 	"install_hook", lua_install_hook,
+	"get_call_summary", lua_get_call_summary,
+	"clear_call_summary", lua_clear_call_summary,
 	NULL, NULL,
 };
 
@@ -91,12 +96,42 @@ static int lua_install_hook(lua_State* L)
 
 
 
+int lua_get_call_summary(lua_State* L)
+{
+	size_t count;
+	const char** name;
+	double* time;
+	function_calls_info(&name, &time, &count);
+	
+	lua_newtable(L);
+	for (size_t i = 0; i < count; ++i) {
+		const char* function_name = name[i];
+		double this_time = time[i];
+		
+		lua_pushnumber(L, this_time);
+		lua_setfield(L, -2, function_name);
+	}
+	
+	return 1;
+}
+
+
+int lua_clear_call_summary(lua_State* L)
+{
+	function_calls_info_clear();
+	lua_sethook(L, NULL, 0, 0);
+	return 0;
+}
+
+
+
 static void benchmark_hook(lua_State *L, lua_Debug *ar)
 {
 	lua_getstack(L, 0, ar);
 	lua_getinfo(L, "n", ar);
 	
-	printf("Lua info: Name: [%s], %s.\n", ar->name, event_to_string(ar->event));
+	if (!ar->name)
+		return;
 	
 	switch (ar->event) {
 		case LUA_HOOKCALL:

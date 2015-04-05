@@ -34,7 +34,7 @@ benchmark.begin_run();
 
 local triangle = 1
 local index = 1
-local iterate_num = 100
+local iterate_num = 50
 
 while factorCount(triangle) < iterate_num do
 	index = index + 1
@@ -133,8 +133,6 @@ end
 local lisp_src = file:read("a")
 local s_exp = quote.quote(lisp_src)
 
-benchmark.install_hook()
-
 -- print("Source: ")
 -- print(lisp.list_tostring(s_exp, true) .. "\n")
 
@@ -143,6 +141,7 @@ local bottom_cont = eval.ContinuationBottom:new(print)
 local env_regular = eval_reg.Enviornment.initEnviornment()
 
 benchmark.begin_run()
+benchmark.install_hook()
 
 env:define("iterate_num", iterate_num, bottom_cont)
 env_regular:defineVar("iterate_num", iterate_num)
@@ -154,9 +153,26 @@ else
     value = env_regular:evalSequence(s_exp)
 end
 
+local benchmark_result = benchmark.get_call_summary()
+benchmark.clear_call_summary()
 time = benchmark.end_run()
 
 print("Triangle: " .. value .. " takes " .. time)
+
+
+
+------------------------------------------------------------------------
+--
+--   Benchmark Report
+--
+------------------------------------------------------------------------
+
+
+print("");
+print("Benchmark:")
+for k, v in pairs(benchmark_result) do
+    print(k .. "  ", v)
+end
 
 
 

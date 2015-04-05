@@ -22,7 +22,7 @@
 C_API void function_called(const char* name);
 C_API void function_returned(const char* name);
 
-C_API void function_calls_info(const char** name, float* time, size_t* count);
+C_API void function_calls_info(const char*** name, double** time, size_t* count);
 C_API void function_calls_info_clear();
 
 

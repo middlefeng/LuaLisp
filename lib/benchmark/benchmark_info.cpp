@@ -87,6 +87,55 @@ void function_returned(const char* name)
 
 
 
+
+struct query_result
+{
+	const char** names;
+	double* times;
+	size_t count;
+};
+
+static query_result query_result_set;
+
+
+void function_calls_info(const char*** name, double** time, size_t* count)
+{
+	system_call_events.clear();
+	
+	*count = function_calls_time.size();
+	
+	query_result_set.count = *count;
+	query_result_set.names = new const char*[*count];
+	query_result_set.times = new double[*count];
+	
+	auto it = function_calls_time.begin();
+	for (size_t i = 0; i < *count; ++i) {
+		query_result_set.names[i] = it->first.c_str();
+		query_result_set.times[i] = it->second;
+		++it;
+	}
+	
+	*name = query_result_set.names;
+	*time = query_result_set.times;
+}
+
+
+
+void function_calls_info_clear()
+{
+	delete[] query_result_set.names;
+	delete[] query_result_set.times;
+	query_result_set.count = 0;
+	
+	function_calls_time.clear();
+}
+
+
+
+
+
+
+
 double system_time()
 {
 	struct timeval timev;
