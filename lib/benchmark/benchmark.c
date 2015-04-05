@@ -14,6 +14,8 @@
 
 #include <sys/time.h>
 
+#include "benchmark_info.h"
+
 
 static int lua_begin(lua_State* L);
 static int lua_end(lua_State* L);
@@ -95,6 +97,16 @@ static void benchmark_hook(lua_State *L, lua_Debug *ar)
 	lua_getinfo(L, "n", ar);
 	
 	printf("Lua info: Name: [%s], %s.\n", ar->name, event_to_string(ar->event));
+	
+	switch (ar->event) {
+		case LUA_HOOKCALL:
+			function_called(ar->name);
+			break;
+		case LUA_HOOKRET:
+			function_returned(ar->name);
+		default:
+			break;
+	}
 }
 
 

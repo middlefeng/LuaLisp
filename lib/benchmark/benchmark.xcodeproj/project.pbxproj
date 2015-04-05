@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		2C0D6F421AC8AEF6009E1417 /* libluad.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2C0D6F411AC8AE90009E1417 /* libluad.dylib */; };
+		2C3E7BF11AD0C3EC004A2C38 /* benchmark_info.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2C3E7BEF1AD0C3EC004A2C38 /* benchmark_info.cpp */; };
+		2C3E7BF21AD0C3EC004A2C38 /* benchmark_info.h in Headers */ = {isa = PBXBuildFile; fileRef = 2C3E7BF01AD0C3EC004A2C38 /* benchmark_info.h */; };
 		2C4DC91C1AC28D9500DB8D8F /* benchmark.c in Sources */ = {isa = PBXBuildFile; fileRef = 2C4DC91A1AC28D9500DB8D8F /* benchmark.c */; };
 		2C4DC91D1AC28D9500DB8D8F /* benchmark.h in Headers */ = {isa = PBXBuildFile; fileRef = 2C4DC91B1AC28D9500DB8D8F /* benchmark.h */; };
 /* End PBXBuildFile section */
@@ -52,6 +54,8 @@
 
 /* Begin PBXFileReference section */
 		2C0D6F301AC8AE90009E1417 /* lua.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = lua.xcodeproj; path = ../lua/project/lua.xcodeproj; sourceTree = "<group>"; };
+		2C3E7BEF1AD0C3EC004A2C38 /* benchmark_info.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = benchmark_info.cpp; sourceTree = "<group>"; };
+		2C3E7BF01AD0C3EC004A2C38 /* benchmark_info.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = benchmark_info.h; sourceTree = "<group>"; };
 		2C4DC8FF1AC28D1200DB8D8F /* libbenchmark.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libbenchmark.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		2C4DC91A1AC28D9500DB8D8F /* benchmark.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = benchmark.c; sourceTree = "<group>"; };
 		2C4DC91B1AC28D9500DB8D8F /* benchmark.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = benchmark.h; sourceTree = "<group>"; };
@@ -87,6 +91,8 @@
 				2C0D6F301AC8AE90009E1417 /* lua.xcodeproj */,
 				2C4DC91A1AC28D9500DB8D8F /* benchmark.c */,
 				2C4DC91B1AC28D9500DB8D8F /* benchmark.h */,
+				2C3E7BEF1AD0C3EC004A2C38 /* benchmark_info.cpp */,
+				2C3E7BF01AD0C3EC004A2C38 /* benchmark_info.h */,
 				2C4DC9001AC28D1200DB8D8F /* Products */,
 			);
 			sourceTree = "<group>";
@@ -106,6 +112,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2C3E7BF21AD0C3EC004A2C38 /* benchmark_info.h in Headers */,
 				2C4DC91D1AC28D9500DB8D8F /* benchmark.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -211,6 +218,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				2C4DC91C1AC28D9500DB8D8F /* benchmark.c in Sources */,
+				2C3E7BF11AD0C3EC004A2C38 /* benchmark_info.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
