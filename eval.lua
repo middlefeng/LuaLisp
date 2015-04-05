@@ -476,9 +476,8 @@ end
 
 
 function is_self_evaluating(exp)
-	return (type(exp) == 'string' and string.sub(exp, 1, 1) == "'") or
-		    type(exp) == 'number' or type(exp) == 'boolean' or
-		    false
+	-- string is quote rather than self-evaluating
+	return type(exp) == 'number' or type(exp) == 'boolean' or false
 end
 
 
