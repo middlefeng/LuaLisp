@@ -418,12 +418,15 @@ Continuation = {}
 Continuation.__index = Continuation
 
 
-function Continuation:new(env, k)
+function Continuation:new(env, k, inhert)
 	local result = {}
 	result.__index = result
-	result.env = env
-	result.continuation = k
-	setmetatable(result, self)
+	if not inhert then
+		result.env = env
+		result.continuation = k
+	else
+		setmetatable(result, self)
+	end
 	return result
 end
 
@@ -440,7 +443,7 @@ end
 
 
 
-ContinuationBottom = Continuation:new()
+ContinuationBottom = Continuation:new(nil, nil, true)
 
 
 function ContinuationBottom:new(func)
@@ -466,7 +469,7 @@ end
 
 
 
-ContinuationIf = Continuation:new()
+ContinuationIf = Continuation:new(nil, nil, true)
 
 
 function ContinuationIf:new(true_exp, false_exp, env, k)
@@ -494,7 +497,7 @@ end
 
 
 
-ContinuationBegin = Continuation:new()
+ContinuationBegin = Continuation:new(nil, nil, true)
 
 
 function ContinuationBegin:new(exp_list, env, k)
@@ -515,7 +518,7 @@ end
 
 
 
-ContinuationSet = Continuation:new()
+ContinuationSet = Continuation:new(nil, nil, true)
 
 
 function ContinuationSet:new(name, env, k)
@@ -532,7 +535,7 @@ end
 
 
 
-ContinuationDefine = Continuation:new()
+ContinuationDefine = Continuation:new(nil, nil, true)
 
 
 function ContinuationDefine:new(name, env, k)
@@ -551,7 +554,7 @@ end
 
 
 
-ContinuationEvalFunction = Continuation:new()
+ContinuationEvalFunction = Continuation:new(nil, nil, true)
 
 
 function ContinuationEvalFunction:new(exp_list, env, k)
@@ -569,7 +572,7 @@ end
 
 
 
-ContinuationArguments = Continuation:new()
+ContinuationArguments = Continuation:new(nil, nil, true)
 
 
 function ContinuationArguments:new(exp_list, env, k)
@@ -588,7 +591,7 @@ end
 
 
 
-ContinuationGather = Continuation:new()
+ContinuationGather = Continuation:new(nil, nil, true)
 
 
 function ContinuationGather:new(exp_list, k)
@@ -606,7 +609,7 @@ end
 
 
 
-ContinuationApply = Continuation:new()
+ContinuationApply = Continuation:new(nil, nil, true)
 
 
 function ContinuationApply:new(func, env, k)
@@ -627,7 +630,7 @@ end
 
 
 
-ContinuationCatch = Continuation:new()
+ContinuationCatch = Continuation:new(nil, nil, true)
 
 
 function ContinuationCatch:new(body, env, k)
@@ -648,7 +651,7 @@ end
 
 
 
-ContinuationLabel = Continuation:new()
+ContinuationLabel = Continuation:new(nil, nil, true)
 
 
 
@@ -679,7 +682,7 @@ end
 
 
 
-ContinuationThrow = Continuation:new()
+ContinuationThrow = Continuation:new(nil, nil, true)
 
 
 function ContinuationThrow:new(from, env, k)
@@ -701,7 +704,7 @@ end
 
 
 
-ContinuationThrowing = Continuation:new()
+ContinuationThrowing = Continuation:new(nil, nil, true)
 
 
 function ContinuationThrowing:new(tag, label_k, k)
