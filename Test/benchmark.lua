@@ -34,7 +34,7 @@ benchmark.begin_run();
 
 local triangle = 1
 local index = 1
-local iterate_num = 50
+local iterate_num = 70
 
 while factorCount(triangle) < iterate_num do
 	index = index + 1

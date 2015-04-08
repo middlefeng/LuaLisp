@@ -30,59 +30,53 @@ enum function_call_state
 
 struct function_call
 {
-	function_call_state state;
+	std::string name;
 	double time;
 };
 
-typedef std::list<function_call> function_call_events;
-typedef std::unordered_map<std::string, function_call_events> system_call_events_type;
-
-
-static system_call_events_type system_call_events;
+std::list<function_call> function_call_stack;
 
 
 void function_called(const char* name)
 {
+	double time = system_time();
+	
 	// get the current time;
 	struct function_call this_call;
-	this_call.state = function_call_begin;
-	this_call.time = system_time();
+	this_call.name = name;
+	this_call.time = time;
 	
-	auto it = system_call_events.find(name);
-	
-	if (it == system_call_events.end()) {
-		function_call_events events;
-		system_call_events.insert(std::make_pair(std::string(name), events));
-	}
-	
-	function_call_events& call_events = system_call_events[name];
-	call_events.push_back(this_call);
+	function_call_stack.push_back(this_call);
 }
 
 
 
 
-void function_returned(const char* name)
+void function_tailcalled(const char* name)
 {
+	function_returned();
+	function_called(name);
+}
+
+
+
+
+void function_returned()
+{
+	if (function_call_stack.size() == 0)
+		return;
+	
 	double end_time = system_time();
 	
-	auto it = system_call_events.find(name);
-	if (it == system_call_events.end()) {
-		printf("Error: %s is not called.\n", name);
-		return;
-	}
+	struct function_call& topest_call = function_call_stack.back();
+	double run_time = end_time - topest_call.time;
 	
-	function_call_events& call_events = system_call_events[name];
-	struct function_call this_call = call_events.back();
-	call_events.pop_back();
-	
-	double run_time = end_time - this_call.time;
-	
-	auto it_a = function_calls_time.find(name);
+	auto it_a = function_calls_time.find(topest_call.name);
 	if (it_a != function_calls_time.end())
-		run_time += function_calls_time[name];
+		run_time += function_calls_time[topest_call.name];
 	
-	function_calls_time[name] = run_time;
+	function_calls_time[topest_call.name] = run_time;
+	function_call_stack.pop_back();
 }
 
 
@@ -100,7 +94,7 @@ static query_result query_result_set;
 
 void function_calls_info(const char*** name, double** time, size_t* count)
 {
-	system_call_events.clear();
+	function_call_stack.clear();
 	
 	*count = function_calls_time.size();
 	

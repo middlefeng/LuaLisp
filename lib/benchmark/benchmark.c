@@ -13,6 +13,7 @@
 #include "lauxlib.h"
 
 #include <sys/time.h>
+#include <string.h>
 
 #include "benchmark_info.h"
 
@@ -128,17 +129,19 @@ int lua_clear_call_summary(lua_State* L)
 static void benchmark_hook(lua_State *L, lua_Debug *ar)
 {
 	lua_getstack(L, 0, ar);
-	lua_getinfo(L, "n", ar);
+	lua_getinfo(L, "nS", ar);
 	
-	if (!ar->name)
-		return;
+	static char name[128];
+	sprintf(name, "%s:%s,%d", event_to_string(ar->event), ar->source, ar->linedefined);
 	
 	switch (ar->event) {
 		case LUA_HOOKCALL:
-			function_called(ar->name);
+			function_called(name);
 			break;
+		case LUA_HOOKTAILCALL:
+			function_tailcalled(name);
 		case LUA_HOOKRET:
-			function_returned(ar->name);
+			function_returned();
 		default:
 			break;
 	}
