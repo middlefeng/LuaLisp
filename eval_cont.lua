@@ -77,7 +77,7 @@ end
 
 
 function Environment:lookup(name, k)
-	if self.binds[name] then
+	if self.binds[name] ~= nil then
 		return k:resume(self.binds[name])
 	elseif self.enclosing then
 		return self.enclosing:lookup(name, k)
@@ -89,7 +89,10 @@ end
 
 
 function Environment:update(name, val, k)
-	if self.binds[name] then
+	if self.binds[name] ~= nil then
+		-- val could be boolean 'false'
+		val = ((val == nil) and nil_val) or val
+
 		self.binds[name] = val
 		return k:resume(val)
 	elseif self.enclosing then
@@ -104,7 +107,9 @@ function Environment:define(var, val, k)
 	if self.binds[name] then
 		error("Redefine variable: " .. var)
 	else
-		val = val or nil_val
+		-- val could be boolean 'false'
+		val = ((val == nil) and nil_val) or val
+
 		self.binds[var] = val
 		return k:resume(val)
 	end

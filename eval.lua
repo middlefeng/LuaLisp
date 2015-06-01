@@ -114,7 +114,7 @@ end
 
 
 function Enviornment:lookup(var)
-	if self.frame[var] then
+	if self.frame[var] ~= nil then
 		if self.frame[var] == nil_val then
 			return nil_val
 		else
@@ -130,8 +130,9 @@ end
 
 
 function Enviornment:setVar(var, val)
-	if self.frame[var] then
-		val = val or nil_val
+	if self.frame[var] ~= nil then
+		-- val could be boolean 'false'
+		val = ((val == nil) and nil_val) or val
 		self.frame[var] = val
 		return val
 	elseif self.enclosing then
@@ -144,7 +145,8 @@ end
 
 
 function Enviornment:defineVar(var, val)
-	val = val or nil_val
+	-- val could be boolean 'false'
+	val = ((val == nil) and nil_val) or val
 	self.frame[var] = val
 end
 
