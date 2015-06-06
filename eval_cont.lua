@@ -164,6 +164,10 @@ local function primitive_or(...)
 	return result
 end
 
+local function primitive_not(a)
+	return (not result)
+end
+
 
 
 local function primitive_add(...)
@@ -395,6 +399,7 @@ LispPrimitive.primitives =
 
 	["and"] = LispPrimitive:new(primitive_and, "and"),
 	["or"] = LispPrimitive:new(primitive_or, "or"),
+	["not"] = LispPrimitive:new(primitive_not, "not"),
 
 	["sqrt"] = LispPrimitive:new(math.sqrt, "sqrt"),
 	["mod"] = LispPrimitive:new(math.fmod, "mod"),
