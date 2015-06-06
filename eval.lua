@@ -10,6 +10,7 @@ To Do:
 
 do
 	local lisp = require "lisp"
+	local common = require "eval_common"
 	
 	local old_setmetatable = _ENV.setmetatable
 	local old_getmetatable = _ENV.getmetatable
@@ -17,13 +18,11 @@ do
 	local old_table = _ENV.table
 	local old_type = _ENV.type
 	local old_string = _ENV.string
-	local old_tostring = _ENV.tostring
 	local old_math = math
 	
 	local old_print = _ENV.print
 	local old_pairs = _ENV.pairs
-	local old_select = _ENV.select
-
+	
 	_ENV = {}
 	_ENV.setmetatable = old_setmetatable
 	_ENV.getmetatable = old_getmetatable
@@ -44,12 +43,12 @@ do
 	_ENV.table = table
 	_ENV.type = old_type
 	_ENV.string = old_string
-	_ENV.tostring = old_tostring
 	_ENV.math = old_math
 	
 	_ENV.print = old_print
 	_ENV.pairs = old_pairs
-	_ENV.select = old_select
+	
+	_ENV.common = common
 end
 
 
@@ -290,103 +289,6 @@ end
 Procedure.__tostring = procedure_to_string
 
 
-local function primitive_null(exp)
-	return exp == empty_list
-end
-
-
-local function primitive_atom(exp)
-	return (not is_pair(exp)) and (exp ~= empty_list)
-end
-
-
-local function primitive_add(...)
-	local result = 0
-	for i = 1, select('#', ...) do
-		result = result + select(i, ...)
-	end
-	return result
-end
-
-
-
-local function primitive_sub(...)
-	local result = select(1, ...)
-	for i = 2, select('#', ...) do
-		result = result - select(i, ...)
-	end
-	return result
-end
-
-
-
-local function primitive_mul(...)
-	local result = 1
-	for i = 1, select('#', ...) do
-		result = result * select(i, ...)
-	end
-	return result
-end
-
-
-
-local function primitive_div(...)
-	local result = select('#', ...)
-	for i = 2, select('#', ...) do
-		result = result + select(i, ...)
-	end
-	return result
-end
-
-
-
-local function primitive_algebra(oper)
-	if oper == '+' then
-		return primitive_add
-	elseif oper == '-' then
-		return primitive_sub
-	elseif oper == '*' then
-		return primitive_mul
-	elseif oper == "/" then
-		return primitive_div
-	elseif oper == "==" then
-		return function(v1, v2) return v1 == v2 end
-	elseif oper == "<" then
-		return function(v1, v2) return v1 < v2 end
-	elseif oper == ">" then
-		return function(v1, v2) return v1 > v2 end
-	end
-end
-
-
-local function primitive_tostring(list)
-	if is_pair(list) then
-		return list_tostring(list)
-	end
-
-	return tostring(list)
-end
-
-
-
-local function primitive_and(...)
-	local result = true
-	for i = 1, select('#', ...) do
-		result = result and select(i, ...)
-	end
-	return result
-end
-
-
-local function primitive_or(...)
-	local result = false
-	for i = 1, select('#', ...) do
-		result = result or select(i, ...)
-	end
-	return result
-end
-
-
 
 function Procedure:new(params, body, env, type, primitivename)
 	local result = {
@@ -407,22 +309,23 @@ Procedure.primitiveProcedures = {
 	["cons"] = Procedure:new(nil, cons, nil, 'primitive', 'cons'),
 	["list"] = Procedure:new(nil, list, nil, 'primitive', 'list'),
 	["length"] = Procedure:new(nil, length, nil, 'primitive', 'length'),
-	["null?"] = Procedure:new(nil, primitive_null, nil, 'primitive', 'null?'),
+	["null?"] = Procedure:new(nil, common.primitive_null, nil, 'primitive', 'null?'),
 	["pair?"] = Procedure:new(nil, is_pair, nil, 'primitive', 'pair?'),
 	["atom?"] = Procedure:new(nil, primitive_atom, nil, 'primitive', 'atom?'),
-	["+"] =  Procedure:new(nil, primitive_algebra('+'), nil, 'primitive', '+'),
-	["-"] =  Procedure:new(nil, primitive_algebra('-'), nil, 'primitive', '-'),
-	["*"] =  Procedure:new(nil, primitive_algebra('*'), nil, 'primitive', '*'),
-	["/"] =  Procedure:new(nil, primitive_algebra('/'), nil, 'primitive', '/'),
-	["<"] =  Procedure:new(nil, primitive_algebra('<'), nil, 'primitive', '<'),
-	[">"] =  Procedure:new(nil, primitive_algebra('>'), nil, 'primitive', '>'),
-	["eq?"] = Procedure:new(nil, primitive_algebra('=='), nil, 'primitive', 'eq?'),
-	["="] = Procedure:new(nil, primitive_algebra('=='), nil, 'primitive', '='),
+	["+"] =  Procedure:new(nil, common.primitive_algebra('+'), nil, 'primitive', '+'),
+	["-"] =  Procedure:new(nil, common.primitive_algebra('-'), nil, 'primitive', '-'),
+	["*"] =  Procedure:new(nil, common.primitive_algebra('*'), nil, 'primitive', '*'),
+	["/"] =  Procedure:new(nil, common.primitive_algebra('/'), nil, 'primitive', '/'),
+	["<"] =  Procedure:new(nil, common.primitive_algebra('<'), nil, 'primitive', '<'),
+	[">"] =  Procedure:new(nil, common.primitive_algebra('>'), nil, 'primitive', '>'),
+	["eq?"] = Procedure:new(nil, common.primitive_algebra('=='), nil, 'primitive', 'eq?'),
+	["="] = Procedure:new(nil, common.primitive_algebra('=='), nil, 'primitive', '='),
 	["print"] = Procedure:new(nil, print, nil, 'primitive', 'print'),
-	["tostring"] = Procedure:new(nil, primitive_tostring, nil, 'primitive', 'tostring'),
+	["tostring"] = Procedure:new(nil, common.primitive_tostring, nil, 'primitive', 'tostring'),
 
-	["and"] = Procedure:new(nil, primitive_and, nil, "primitive", "and"),
-	["or"] = Procedure:new(nil, primitive_or, nil, "primitive", "or"),
+	["and"] = Procedure:new(nil, common.primitive_and, nil, "primitive", "and"),
+	["or"] = Procedure:new(nil, common.primitive_or, nil, "primitive", "or"),
+    ["not"] = Procedure:new(nil, common.primitive_not, nil, "primitive", "not"),
 
 	["sqrt"] = Procedure:new(nil, math.sqrt, nil, "primitive", "sqrt"),
 	["mod"] = Procedure:new(nil, math.fmod, nil, "primitive", "mod"),

@@ -3,15 +3,14 @@ do
 
 	local lisp = require "lisp"
 	local quote = require "quote"
+	local common = require "eval_common"
 
 	local old_error = error
 	local old_setmetatable = setmetatable
-	local old_select = select
 	local old_io = io
 	local old_math = math
 
 	local old_type = type
-	local old_string = string
 	local print_lua = print
 
 	_ENV = {}
@@ -23,10 +22,9 @@ do
 	_ENV.eval_exp = eval_exp
 	_ENV.setmetatable = old_setmetatable
 	_ENV.type = old_type
-	_ENV.string = old_string
-	_ENV.select = old_select
 	_ENV.print_lua = print_lua
 
+	_ENV.common = common
 end
 
 
@@ -125,153 +123,6 @@ end
 
 
 ------------------------------          Environment           ------------------------------
---------------------------------------------------------------------------------------------
-
-
-
-
-
-
---------------------------------------------------------------------------------------------
-------------------------------        Primitive Helper        ------------------------------
-
-
-
-local function primitive_null(exp)
-	return exp == lisp.empty_list
-end
-
-
-local function primitive_atom(exp)
-	return (not lisp.is_pair(exp)) and (exp ~= lisp.empty_list)
-end
-
-
-local function primitive_and(...)
-	local result = true
-	for i = 1, select('#', ...) do
-		result = result and select(i, ...)
-	end
-	return result
-end
-
-
-local function primitive_or(...)
-	local result = false
-	for i = 1, select('#', ...) do
-		result = result or select(i, ...)
-	end
-	return result
-end
-
-local function primitive_not(a)
-	return (not result)
-end
-
-
-
-local function primitive_add(...)
-	local result = 0
-	for i = 1, select('#', ...) do
-		result = result + select(i, ...)
-	end
-	return result
-end
-
-
-
-local function primitive_sub(...)
-	local result = select(1, ...)
-	for i = 2, select('#', ...) do
-		result = result - select(i, ...)
-	end
-	return result
-end
-
-
-
-local function primitive_mul(...)
-	local result = 1
-	for i = 1, select('#', ...) do
-		result = result * select(i, ...)
-	end
-	return result
-end
-
-
-
-local function primitive_div(...)
-	local result = select(1, ...)
-	for i = 2, select('#', ...) do
-		result = result / select(i, ...)
-	end
-	return result
-end
-
-
-
-local function primitive_algebra(oper)
-	if oper == '+' then
-		return primitive_add
-	elseif oper == '-' then
-		return primitive_sub
-	elseif oper == '*' then
-		return primitive_mul
-	elseif oper == "/" then
-		return primitive_div
-	elseif oper == "==" then
-		return function(v1, v2) return v1 == v2 end
-	elseif oper == "<" then
-		return function(v1, v2) return v1 < v2 end
-	elseif oper == ">" then
-		return function(v1, v2) return v1 > v2 end
-	end
-end
-
-
-local function primitive_tostring(list, wrap)
-	if lisp.is_pair(list) then
-		return lisp.list_tostring(list, wrap)
-	end
-
-	return lisp.tostring(list)
-end
-
-
-
-local function primitive_open(mode)
-	return function(filename)
-			   return io.open(filename, mode)
-		   end
-end
-
-
-local function primitive_close(port)
-	return io.close(port)
-end
-
-
-
-local function primitive_read_string(inport)
-	local content = inport:read("a")
-	inport:seek("set", 0)
-	return content
-end
-
-
-
-
-local function primitive_read(instream)
-	if type(instream) ~= 'string' then
-		instream = primitive_read_string(instream)
-	end
-	return quote.quote(instream)
-end
-
-
-
-
-------------------------------        Primitive Helper        ------------------------------
 --------------------------------------------------------------------------------------------
 
 
@@ -384,31 +235,31 @@ LispPrimitive.primitives =
 	["print"] = LispPrimitive:new(print_lua, "print"),
 	["display"] = LispPrimitive:new(print_lua, "print"),
 	["list"] = LispPrimitive:new(lisp.list, "list"),
-	["atom?"] = LispPrimitive:new(primitive_atom, "atom?"),
+	["atom?"] = LispPrimitive:new(common.primitive_atom, "atom?"),
 	["pair?"] = LispPrimitive:new(lisp.is_pair, "pair?"),
-	["null?"] = LispPrimitive:new(primitive_null, "null?"),
+	["null?"] = LispPrimitive:new(common.primitive_null, "null?"),
 	["tostring"] = LispPrimitive:new(primitive_tostring, "tostring"),
 	["call/cc"] = LispCallCCPrimitive:new(),
-	["+"] = LispPrimitive:new(primitive_algebra('+'), "+"),
-	["-"] = LispPrimitive:new(primitive_algebra('-'), "-"),
-	["*"] = LispPrimitive:new(primitive_algebra('*'), "*"),
-	["/"] = LispPrimitive:new(primitive_algebra('/'), "/"),
-	["eq?"] = LispPrimitive:new(primitive_algebra('=='), "eq?"),
-	["<"] = LispPrimitive:new(primitive_algebra('<'), "<"),
-	[">"] = LispPrimitive:new(primitive_algebra('>'), ">"),
+	["+"] = LispPrimitive:new(common.primitive_algebra('+'), "+"),
+	["-"] = LispPrimitive:new(common.primitive_algebra('-'), "-"),
+	["*"] = LispPrimitive:new(common.primitive_algebra('*'), "*"),
+	["/"] = LispPrimitive:new(common.primitive_algebra('/'), "/"),
+	["eq?"] = LispPrimitive:new(common.primitive_algebra('=='), "eq?"),
+	["<"] = LispPrimitive:new(common.primitive_algebra('<'), "<"),
+	[">"] = LispPrimitive:new(common.primitive_algebra('>'), ">"),
 
-	["and"] = LispPrimitive:new(primitive_and, "and"),
-	["or"] = LispPrimitive:new(primitive_or, "or"),
-	["not"] = LispPrimitive:new(primitive_not, "not"),
+	["and"] = LispPrimitive:new(common.primitive_and, "and"),
+	["or"] = LispPrimitive:new(common.primitive_or, "or"),
+	["not"] = LispPrimitive:new(common.primitive_not, "not"),
 
 	["sqrt"] = LispPrimitive:new(math.sqrt, "sqrt"),
 	["mod"] = LispPrimitive:new(math.fmod, "mod"),
 	["floor"] = LispPrimitive:new(math.floor, "floor"),
 
-	["open-input-file"] = LispPrimitive:new(primitive_open('r'), "open-input-file"),
-	["read-string"] = LispPrimitive:new(primitive_read_string, "read-string"),
+	["open-input-file"] = LispPrimitive:new(common.primitive_open('r'), "open-input-file"),
+	["read-string"] = LispPrimitive:new(common.primitive_read_string, "read-string"),
 	["read"] = LispPrimitive:new(primitive_read, "read"),
-	["close-input-port"] = LispPrimitive:new(primitive_close, "close-input-port"),
+	["close-input-port"] = LispPrimitive:new(common.primitive_close, "close-input-port"),
 	["eval"] = LispEvalPrimitive:new()
 }
 
