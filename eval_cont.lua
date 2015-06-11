@@ -2,12 +2,10 @@
 do
 
 	local lisp = require "lisp"
-	local quote = require "quote"
 	local common = require "eval_common"
 
 	local old_error = error
 	local old_setmetatable = setmetatable
-	local old_io = io
 	local old_math = math
 
 	local old_type = type
@@ -15,8 +13,6 @@ do
 
 	_ENV = {}
 	_ENV.lisp = lisp
-	_ENV.quote = quote
-	_ENV.io = old_io
 	_ENV.math = old_math
 	_ENV.error = old_error
 	_ENV.eval_exp = eval_exp
@@ -238,7 +234,7 @@ LispPrimitive.primitives =
 	["atom?"] = LispPrimitive:new(common.primitive_atom, "atom?"),
 	["pair?"] = LispPrimitive:new(lisp.is_pair, "pair?"),
 	["null?"] = LispPrimitive:new(common.primitive_null, "null?"),
-	["tostring"] = LispPrimitive:new(primitive_tostring, "tostring"),
+	["tostring"] = LispPrimitive:new(common.primitive_tostring, "tostring"),
 	["call/cc"] = LispCallCCPrimitive:new(),
 	["+"] = LispPrimitive:new(common.primitive_algebra('+'), "+"),
 	["-"] = LispPrimitive:new(common.primitive_algebra('-'), "-"),
@@ -258,7 +254,7 @@ LispPrimitive.primitives =
 
 	["open-input-file"] = LispPrimitive:new(common.primitive_open('r'), "open-input-file"),
 	["read-string"] = LispPrimitive:new(common.primitive_read_string, "read-string"),
-	["read"] = LispPrimitive:new(primitive_read, "read"),
+	["read"] = LispPrimitive:new(common.primitive_read, "read"),
 	["close-input-port"] = LispPrimitive:new(common.primitive_close, "close-input-port"),
 	["eval"] = LispEvalPrimitive:new()
 }

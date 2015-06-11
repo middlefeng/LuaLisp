@@ -1,11 +1,18 @@
 
 
 do
+	local quote = require "quote"
+
 	local old_select = select
+	local old_io = io
+	local old_type = type
 
 	_ENV = {}
 
 	_ENV.select = old_select
+	_ENV.io = old_io
+	_ENV.type = old_type
+	_ENV.quote = quote
 end
 
 
