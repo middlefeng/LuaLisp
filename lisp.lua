@@ -37,7 +37,11 @@ setmetatable(empty_list, empty_list_meta)
 
 function list_tostring(list, wrap)
 
-	if type(list) ~= "table" then
+	-- treat "list" as custom data with a __tostring metamethod if
+	-- both car and cdr are nil
+	--
+	if type(list) ~= "table" or
+	   (list.car == nil and list.cdr == nil) then
 		return tostring(list)
 	end
 
