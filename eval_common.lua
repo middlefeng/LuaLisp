@@ -56,7 +56,7 @@ end
 
 
 function primitive_not(a)
-	return (not result)
+	return (not a)
 end
 
 
