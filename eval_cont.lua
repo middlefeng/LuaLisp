@@ -234,7 +234,6 @@ LispPrimitive.primitives =
 	["atom?"] = LispPrimitive:new(common.primitive_atom, "atom?"),
 	["pair?"] = LispPrimitive:new(lisp.is_pair, "pair?"),
 	["null?"] = LispPrimitive:new(common.primitive_null, "null?"),
-	["tostring"] = LispPrimitive:new(common.primitive_tostring, "tostring"),
 	["call/cc"] = LispCallCCPrimitive:new(),
 	["+"] = LispPrimitive:new(common.primitive_algebra('+'), "+"),
 	["-"] = LispPrimitive:new(common.primitive_algebra('-'), "-"),
@@ -244,6 +243,9 @@ LispPrimitive.primitives =
 	["<"] = LispPrimitive:new(common.primitive_algebra('<'), "<"),
 	[">"] = LispPrimitive:new(common.primitive_algebra('>'), ">"),
 
+	["tostring"] = LispPrimitive:new(common.primitive_tostring, "tostring"),
+	["string-append"] = LispPrimitive:new(common.primitive_string_append, "string-append"),
+	
 	["and"] = LispPrimitive:new(common.primitive_and, "and"),
 	["or"] = LispPrimitive:new(common.primitive_or, "or"),
 	["not"] = LispPrimitive:new(common.primitive_not, "not"),

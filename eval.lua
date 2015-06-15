@@ -321,8 +321,10 @@ Procedure.primitiveProcedures = {
 	["eq?"] = Procedure:new(nil, common.primitive_algebra('=='), nil, 'primitive', 'eq?'),
 	["="] = Procedure:new(nil, common.primitive_algebra('=='), nil, 'primitive', '='),
 	["print"] = Procedure:new(nil, print, nil, 'primitive', 'print'),
-	["tostring"] = Procedure:new(nil, common.primitive_tostring, nil, 'primitive', 'tostring'),
 
+	["tostring"] = Procedure:new(nil, common.primitive_tostring, nil, 'primitive', 'tostring'),
+	["string-append"] = Procedure:new(nil, common.primitive_string_append, nil, 'primitive', "string-append"),
+	
 	["and"] = Procedure:new(nil, common.primitive_and, nil, "primitive", "and"),
 	["or"] = Procedure:new(nil, common.primitive_or, nil, "primitive", "or"),
     ["not"] = Procedure:new(nil, common.primitive_not, nil, "primitive", "not"),

@@ -1,18 +1,22 @@
 
+local quote = require "quote"
+local lisp = require "lisp"
+
 
 do
-	local quote = require "quote"
-
 	local old_select = select
 	local old_io = io
 	local old_type = type
+	local old_table = table
 
 	_ENV = {}
 
 	_ENV.select = old_select
 	_ENV.io = old_io
 	_ENV.type = old_type
-	_ENV.quote = quote
+	
+	_ENV.table = {}
+	_ENV.table.concat = old_table.concat
 end
 
 
@@ -122,6 +126,13 @@ function primitive_tostring(list, wrap)
 	end
 
 	return lisp.tostring(list)
+end
+
+
+
+function primitive_string_append(...)
+	local strings = {...}
+	return table.concat(strings)
 end
 
 
