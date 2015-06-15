@@ -36,31 +36,6 @@ function primitive_atom(exp)
 end
 
 
-function primitive_and(...)
-	local result = true
-	for i = 1, select('#', ...) do
-		result = result and select(i, ...)
-	end
-	return result
-end
-
-
-function primitive_or(...)
-	local result = false
-	for i = 1, select('#', ...) do
-		result = result or select(i, ...)
-	end
-	return result
-end
-
-
-
-function primitive_not(a)
-	return (not a)
-end
-
-
-
 function primitive_add(...)
 	local result = 0
 	for i = 1, select('#', ...) do

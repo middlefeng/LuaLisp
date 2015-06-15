@@ -246,10 +246,6 @@ LispPrimitive.primitives =
 	["tostring"] = LispPrimitive:new(common.primitive_tostring, "tostring"),
 	["string-append"] = LispPrimitive:new(common.primitive_string_append, "string-append"),
 	
-	["and"] = LispPrimitive:new(common.primitive_and, "and"),
-	["or"] = LispPrimitive:new(common.primitive_or, "or"),
-	["not"] = LispPrimitive:new(common.primitive_not, "not"),
-
 	["sqrt"] = LispPrimitive:new(math.sqrt, "sqrt"),
 	["mod"] = LispPrimitive:new(math.fmod, "mod"),
 	["floor"] = LispPrimitive:new(math.floor, "floor"),
@@ -866,6 +862,12 @@ function eval(exp, env, k)
 					   lisp.cadr(lisp.cdr(exp)),
 					   lisp.cadr(lisp.cdr(lisp.cdr(exp))),
 					   env, k)
+	elseif is_and(exp) then
+		return eval(and_to_if(lisp.cdr(exp)), env, k)
+	elseif is_or(exp) then
+		return eval(or_to_if(lisp.cdr(exp)), env, k)
+	elseif is_not(exp) then
+		return eval(not_to_if(lisp.cdr(exp)), env, k)
 	elseif is_cond(exp) then
 		return eval(cond_to_if(exp), env, k)
 	elseif is_begin(exp) then
