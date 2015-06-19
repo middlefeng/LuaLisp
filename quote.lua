@@ -196,6 +196,13 @@ function quote(symbols)
 	end
 
 
+
+	local escapes =
+		{
+			['n'] = "\n"
+		}
+
+
 	function read_string(location)
 		local result = {}
 
@@ -209,6 +216,14 @@ function quote(symbols)
 				end
 				last_escape = location + 1
 				location = location + 1
+
+				-- well-known escape
+				--
+				current = string.char(string.byte(symbols, location))
+				if escapes[current] ~= nil then
+					table.insert(result, escapes[current])
+					last_escape = last_escape + 1
+				end
 			end
 		until current == string.byte("\"")
 
