@@ -95,9 +95,13 @@ function primitive_algebra(oper)
 end
 
 
-function primitive_tostring(list, wrap)
+function primitive_tostring(list, wrap, indented, level)
 	if lisp.is_pair(list) then
-		return lisp.list_tostring(list, wrap)
+		if indented then
+			return lisp.list_tostring_indented(list, level, true)
+		else
+			return lisp.list_tostring(list, wrap)
+		end
 	end
 
 	return lisp.tostring(list)

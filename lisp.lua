@@ -93,7 +93,7 @@ local function list_is_nested(list)
 end
 
 
-local function nested_list_rest_items_tostring(rest_items, level)
+local function list_rest_items_tostring_indented(rest_items, level)
 	if rest_items == empty_list then
 		return ""
 	end
@@ -102,18 +102,18 @@ local function nested_list_rest_items_tostring(rest_items, level)
 	local prefix_str = string.rep(" ", level)
 
 	local result = {}
-	table.insert(result, nested_list_tostring(car(rest_items), level, true))
+	table.insert(result, list_tostring_indented(car(rest_items), level, true))
 	
 	if cdr(rest_items) ~= empty_list then
 		table.insert(result, "\n")
-		table.insert(result, nested_list_rest_items_tostring(cdr(rest_items), level))
+		table.insert(result, list_rest_items_tostring_indented(cdr(rest_items), level))
 	end
 
 	return table.concat(result)
 end
 
 
-function nested_list_tostring(list, level, head_prefix)
+function list_tostring_indented(list, level, head_prefix)
 	level = level or 0
 
 	local prefix_str = ""
@@ -131,11 +131,11 @@ function nested_list_tostring(list, level, head_prefix)
 
 	local result = {}
 	table.insert(result, (head_prefix_str .. "("))
-	table.insert(result, nested_list_tostring(car(list), level + 4, false))
+	table.insert(result, list_tostring_indented(car(list), level + 4, false))
 
 	if cdr(list) ~= empty_list then
 		table.insert(result, "\n")
-		table.insert(result, nested_list_rest_items_tostring(cdr(list), level + 4))
+		table.insert(result, list_rest_items_tostring_indented(cdr(list), level + 4))
 	end
 
 	table.insert(result, ")")
