@@ -2,12 +2,10 @@
 do
 
 	local lisp = require "lisp"
-	local quote = require "quote"
 	local common = require "eval_common"
 
 	local old_error = error
 	local old_setmetatable = setmetatable
-	local old_io = io
 	local old_math = math
 
 	local old_type = type
@@ -15,8 +13,6 @@ do
 
 	_ENV = {}
 	_ENV.lisp = lisp
-	_ENV.quote = quote
-	_ENV.io = old_io
 	_ENV.math = old_math
 	_ENV.error = old_error
 	_ENV.eval_exp = eval_exp
@@ -238,7 +234,6 @@ LispPrimitive.primitives =
 	["atom?"] = LispPrimitive:new(common.primitive_atom, "atom?"),
 	["pair?"] = LispPrimitive:new(lisp.is_pair, "pair?"),
 	["null?"] = LispPrimitive:new(common.primitive_null, "null?"),
-	["tostring"] = LispPrimitive:new(primitive_tostring, "tostring"),
 	["call/cc"] = LispCallCCPrimitive:new(),
 	["+"] = LispPrimitive:new(common.primitive_algebra('+'), "+"),
 	["-"] = LispPrimitive:new(common.primitive_algebra('-'), "-"),
@@ -248,17 +243,16 @@ LispPrimitive.primitives =
 	["<"] = LispPrimitive:new(common.primitive_algebra('<'), "<"),
 	[">"] = LispPrimitive:new(common.primitive_algebra('>'), ">"),
 
-	["and"] = LispPrimitive:new(common.primitive_and, "and"),
-	["or"] = LispPrimitive:new(common.primitive_or, "or"),
-	["not"] = LispPrimitive:new(common.primitive_not, "not"),
-
+	["tostring"] = LispPrimitive:new(common.primitive_tostring, "tostring"),
+	["string-append"] = LispPrimitive:new(common.primitive_string_append, "string-append"),
+	
 	["sqrt"] = LispPrimitive:new(math.sqrt, "sqrt"),
 	["mod"] = LispPrimitive:new(math.fmod, "mod"),
 	["floor"] = LispPrimitive:new(math.floor, "floor"),
 
 	["open-input-file"] = LispPrimitive:new(common.primitive_open('r'), "open-input-file"),
 	["read-string"] = LispPrimitive:new(common.primitive_read_string, "read-string"),
-	["read"] = LispPrimitive:new(primitive_read, "read"),
+	["read"] = LispPrimitive:new(common.primitive_read, "read"),
 	["close-input-port"] = LispPrimitive:new(common.primitive_close, "close-input-port"),
 	["eval"] = LispEvalPrimitive:new()
 }
@@ -868,6 +862,12 @@ function eval(exp, env, k)
 					   lisp.cadr(lisp.cdr(exp)),
 					   lisp.cadr(lisp.cdr(lisp.cdr(exp))),
 					   env, k)
+	elseif is_and(exp) then
+		return eval(and_to_if(lisp.cdr(exp)), env, k)
+	elseif is_or(exp) then
+		return eval(or_to_if(lisp.cdr(exp)), env, k)
+	elseif is_not(exp) then
+		return eval(not_to_if(lisp.cdr(exp)), env, k)
 	elseif is_cond(exp) then
 		return eval(cond_to_if(exp), env, k)
 	elseif is_begin(exp) then
