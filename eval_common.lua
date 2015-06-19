@@ -95,9 +95,18 @@ function primitive_algebra(oper)
 end
 
 
-function primitive_tostring(list, wrap)
+--
+--	policy:	 		format: indented, wrap
+--					option:	level of indention
+--
+function primitive_tostring(list, policy, option)
 	if lisp.is_pair(list) then
-		return lisp.list_tostring(list, wrap)
+		if policy == "indented" then
+			return lisp.list_tostring_indented(list, option, true)
+		else
+			local wrap = (policy == "wrap");
+			return lisp.list_tostring(list, wrap)
+		end
 	end
 
 	return lisp.tostring(list)
