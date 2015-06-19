@@ -70,8 +70,8 @@ function list_tostring(list, wrap)
 end
 
 
-function list_is_nested(list)
-	if list == empty_list then
+local function list_is_nested(list)
+	if list == empty_list or (not is_pair(list)) then
 		return false
 	end
 
@@ -90,6 +90,57 @@ function list_is_nested(list)
 	end
 
 	return true
+end
+
+
+local function nested_list_rest_items_tostring(rest_items, level)
+	if rest_items == empty_list then
+		return ""
+	end
+
+	level = level or 0
+	local prefix_str = string.rep(" ", level)
+
+	local result = {}
+	table.insert(result, nested_list_tostring(car(rest_items), level, true))
+	
+	if cdr(rest_items) ~= empty_list then
+		table.insert(result, "\n")
+		table.insert(result, nested_list_rest_items_tostring(cdr(rest_items), level))
+	end
+
+	return table.concat(result)
+end
+
+
+function nested_list_tostring(list, level, head_prefix)
+	level = level or 0
+
+	local prefix_str = ""
+	local head_prefix_str = ""
+	if level > 0 then
+		prefix_str = string.rep(" ", level)
+		if head_prefix then
+			head_prefix_str = prefix_str
+		end
+	end
+
+	if not list_is_nested(list) then
+		return head_prefix_str .. list_tostring(list, false)
+	end
+
+	local result = {}
+	table.insert(result, (head_prefix_str .. "("))
+	table.insert(result, nested_list_tostring(car(list), level + 4, false))
+
+	if cdr(list) ~= empty_list then
+		table.insert(result, "\n")
+		table.insert(result, nested_list_rest_items_tostring(cdr(list), level + 4))
+	end
+
+	table.insert(result, ")")
+
+	return table.concat(result)
 end
 
 
