@@ -204,7 +204,7 @@ function quote(symbols)
 			location = location + 1
 			local current = string.byte(symbols, location)
 			if current == string.byte("\\") then
-				if location - 1 > last_escape then
+				if location - 1 >= last_escape then
 					table.insert(result, string.sub(symbols, last_escape, location - 1))
 				end
 				last_escape = location + 1
