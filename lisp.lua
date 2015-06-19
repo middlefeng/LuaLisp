@@ -66,6 +66,29 @@ function list_tostring(list, wrap)
 end
 
 
+function list_is_nested(list)
+	if list == empty_list then
+		return false
+	end
+
+	local car_item = car(list)
+
+	if (not is_pair(car_item)) then
+		return list_is_nested(cdr(list))
+	end
+
+	if length(car_item) > 1 then
+		return true
+	end
+
+	if (not list_is_nested(car_item)) then
+	   return list_is_nested(cdr(list)) 
+	end
+
+	return true
+end
+
+
 local cons_meta = {
 	__tostring = list_tostring,
 	__eq = list_eq
